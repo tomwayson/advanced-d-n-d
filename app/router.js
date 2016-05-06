@@ -8,6 +8,7 @@ const Router = Ember.Router.extend({
 Router.map(function() {
   this.route('copy');
   this.route('neighbors');
+  this.route('rows');
 });
 
 export default Router;

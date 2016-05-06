@@ -1,0 +1,13 @@
+<div class="container">
+  <div class="row">
+    <div class="col-sm-3">
+      <h3>Rows</h3>
+      <div draggable=true ondragstart={{action "onDragStart"}} class="drag-handle-add-row">Drag to add row</div>
+      {{!--<button class="btn btn-primary" onclick={{action "addRow"}}>Click to add row</button>--}}
+    </div>
+    <div class="col-sm-9">
+      {{page-layout-editor rows=model.rows onDrop=(action 'onDrop') }}
+    </div>
+  </div>
+</div>
+{{outlet}}
