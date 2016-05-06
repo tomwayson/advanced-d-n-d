@@ -9,19 +9,20 @@
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="#">Advanced Drag &amp; Drop</a>
+          {{link-to "Advanced Drag & Drop" 'index' class="navbar-brand" }}
       </div>
       <div id="navbar" class="navbar-collapse collapse">
         <ul class="nav navbar-nav">
           <li class="active"><a href="#">Home</a></li>
+
           <li>{{#link-to "rows"}}Rows{{/link-to}}</li>
-          <li>{{#link-to "neighbors"}}Neighbors{{/link-to}}</li>
+          <li>{{#link-to "copy"}}Copy{{/link-to}}</li>
+          <li>{{#link-to "cards"}}Cards{{/link-to}}</li>
+
         </ul>
       </div><!--/.nav-collapse -->
     </div><!--/.container-fluid -->
   </nav>
+</div>  <!-- content -->
 
-  <!-- content -->
-  {{outlet}}
-
-</div>
+{{outlet}}

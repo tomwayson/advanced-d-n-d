@@ -1,0 +1,12 @@
+<div class="container">
+  <div class="row">
+    <div class="col-md-6">
+      <div class="draggable" draggable="true">DRAG ME</div>
+    </div>
+  </div>
+</div>
+<div class="container">
+  {{#each model.rows as |row|}}
+  {{layout-cards-editor cards=row.cards}}
+  {{/each}}
+</div>

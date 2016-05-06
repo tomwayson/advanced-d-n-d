@@ -7,8 +7,9 @@ const Router = Ember.Router.extend({
 
 Router.map(function() {
   this.route('copy');
-  this.route('neighbors');
   this.route('rows');
+  this.route('cards');
+
 });
 
 export default Router;
