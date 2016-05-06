@@ -6,9 +6,11 @@ export default Ember.Route.extend({
     return {
       "sections": [
         {
+          "containment":"fixed",
           "rows": []
         },
         {
+          "containment":"fixed",
           "rows":[
             {
               "cards":[
