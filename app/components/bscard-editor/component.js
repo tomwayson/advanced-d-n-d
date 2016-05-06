@@ -16,94 +16,121 @@ export default Ember.Component.extend({
   ignoreNextLeave:false,
 
   dragEnter(event){
-    console.log("Drag Enter: ID: " + this.get('elementId'));
+
+    console.log("Drag Enter: ID: " + this.get('elementId') + ' ClassNames: ' +event.currentTarget.className );
 
     let $el = Ember.$(event.target);
-
+    let cardEl = $el[0];
     //We are entering something that's a child of our element
     if($el.parents('#'+this.get('elementId')).length){
-      //this.set('cardHover', true);
+      //if this element is not the root of the component...
       if($el.attr('id')!== this.get('elementId')){
+        //skip the next leave event b/c it's NOT actually exiting the component...
         this.set('ignoreNextLeave', true);
+        //get the root component div so we can get card sizes...
+        cardEl = $el.parents('#'+this.get('elementId'))[0];
       }
     }
-
-    this.set('cardPosition',this.$().position());
-    this.set('cardSize', {
-      height: this.$().height(),
-      width : this.$().width()
-    });
-
+    //low-level DOM api for-the-win
+    let card = cardEl.getBoundingClientRect();
+    this.set('cardPosition', card);
   },
 
   drop(event){
     this.set('dropTargetClass', '');
+    Ember.$('.crack').css({display:"none"});
   },
 
   dragOver(event){
     //get the x,y from the event
-
-    //console.log('clientX: ' + event.originalEvent.clientX + ' clientY: ' + event.originalEvent.clientY);
-    //console.log('offsetX: ' + event.originalEvent.offsetX + ' Y: ' + event.originalEvent.offsetY);
     let mousePos = {
-      x: event.originalEvent.offsetX,
-      y: event.originalEvent.offsetY
+      x: event.originalEvent.clientX,
+      y: event.originalEvent.clientY
     };
 
-    console.log('X: ' + mousePos.x + ' Y: ' + mousePos.y);
-    //get the size of this element
+    //get the card rectangle
     let card = this.get('cardPosition');
-    card.ht = this.get('cardSize.height');
-    card.wd = this.get('cardSize.width');
-    card.bottom = card.top + card.ht;
-    card.right = card.left + card.wd;
 
-    console.info('Card: top: ' + card.top + ' bottom: ' + card.bottom + ' left: ' + card.left + ' Right: ' + card.right);
+    console.info('Card: top: ' + card.top + ' Y: ' + mousePos.y + ' bottom: ' + card.bottom + ' left: ' + card.left + ' X: ' + mousePos.x +' Right: ' + card.right);
 
-    let proximity = card.wd / 2;
-    let targetClass = '';
+    //when you are within 1/4 of the dimension
+    let xProximity = card.width / 4;
+    let yProximity = card.height / 4;
+    //default crack css
+    let crackcss = {
+      display:"none"
+    };
+    //default insertionPoint
     let currentInsertionPoint = {};
+
+    /**
+     * Determine if we are close to an edge...
+     */
+
     //Close to the left
-    if(mousePos.x < proximity){
-      //targetClass='drop-left';
-      Ember.$('.crack').css({
+    if(mousePos.x > card.left && mousePos.x < (card.left + xProximity) ){
+
+      crackcss = {
         "display":"block",
+        "background-color":"green",
         "top":card.top,
         "left":card.left,
-        "height":card.ht,
+        "height":card.height,
         "width":"4px"
-      });
+      };
       currentInsertionPoint.x = this.get('model.x');
       currentInsertionPoint.y = this.get('model.y');
     }
 
     //Close to the right
-    if(mousePos.x > ( card.wd - proximity ) ) {
-      //targetClass= 'drop-right';
+    if(mousePos.x > ( card.right - xProximity)  && mousePos.x < card.right )  {
+
+      crackcss = {
+        "display":"block",
+        "background-color":"cyan",
+        "top":card.top,
+        "left":card.right,
+        "height":card.height,
+        "width":"4px"
+      };
       currentInsertionPoint.x = this.get('model.x') + this.get('model.width');
       currentInsertionPoint.y = this.get('model.y');
     }
 
     //Close to the top
     //console.log( 'card.top:' + card.top + ' y: ' + mousePos.y +' prx: ' + (card.top + proximity));
-    if(mousePos.y > card.top && mousePos.y < (card.top + proximity) ){
-      //targetClass= 'drop-top';
+    if(mousePos.y > card.top && mousePos.y < (card.top + yProximity) ){
+
       currentInsertionPoint.x = this.get('model.x');
       currentInsertionPoint.y = this.get('model.y');
+      crackcss = {
+        "display":"block",
+        "background-color":"purple",
+        "top":card.top,
+        "left":card.left,
+        "height":"4px",
+        "width":card.width
+      };
     }
 
     //Close to the bottom
-    if(mousePos.y > (card.top + card.ht - proximity) && mousePos.y < (card.top + card.ht) ){
-      //targetClass= 'drop-bottom';
+    if(mousePos.y > (card.bottom - yProximity) && mousePos.y < (card.bottom) ){
+
       currentInsertionPoint.x = this.get('model.x');
       currentInsertionPoint.y = this.get('model.y') + this.get('model.height');
+      crackcss = {
+        "display":"block",
+        "background-color":"navy",
+        "top":card.bottom,
+        "left":card.left,
+        "height":"4px",
+        "width":card.width
+      };
     }
-    //set the class once
-    this.set('dropTargetClass', targetClass);
-    //determine if close to an edge
-    //assign a drop-style
+    //set the crack css
+    Ember.$('.crack').css(crackcss);
+    //set the drop position
     this.set('eventBus.dropPosition', currentInsertionPoint);
-    //console.log('Drop will insert at: ' + currentInsertionPoint.x + ', ' + currentInsertionPoint.y);
 
   },
 

@@ -3,7 +3,8 @@ import layout from './template';
 
 export default Ember.Component.extend({
   layout,
-  classNames: ['layout-row-editor'],
+  tagName:'section',
+  classNames: ['layout-row-editor', 'layout-section'],
   classNameBindings: ['active'],
   active: false,
 

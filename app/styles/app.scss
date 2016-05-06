@@ -4,6 +4,7 @@ $link-color: #555555;
 
 @import 'layout-cards-editor';
 @import 'tom';
+@import 'bs-cards-editor';
 
 .card-hover {
   background-color:purple;
@@ -34,6 +35,7 @@ $link-color: #555555;
   background-color:purple;
   position: absolute;
   display:none;
+  border-radius:2px;
 }
 
 .draggable {
