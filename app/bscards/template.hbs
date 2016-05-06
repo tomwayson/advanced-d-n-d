@@ -1,0 +1,21 @@
+<div class="container">
+  <div class="row">
+    <div class="col-md-6">
+      <div class="draggable" draggable="true">DRAG ME</div>
+    </div>
+  </div>
+</div>
+
+
+
+{{#each model.sections as |section|}}
+  <div class="container">
+    {{#each section.rows as |row|}}
+      <div class="row">
+        {{#each row.cards as |card|}}
+          {{bscard-editor model=card }}
+        {{/each}}
+      </div>
+    {{/each}}
+  </div>
+{{/each}}

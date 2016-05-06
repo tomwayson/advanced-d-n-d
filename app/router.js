@@ -9,7 +9,7 @@ Router.map(function() {
   this.route('copy');
   this.route('rows');
   this.route('cards');
-
+  this.route('bscards');
 
 });
 
