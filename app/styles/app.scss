@@ -1,10 +1,12 @@
 $gray-dark: #333333;
 $link-color: #555555;
 
-
+@import 'layout-section-editor';
+@import 'bs-row-editor';
 @import 'layout-cards-editor';
-@import 'tom';
 @import 'bs-cards-editor';
+// TODO: replace w/ 1 per component, or remove?
+@import 'tom';
 
 .card-hover {
   background-color:purple;
