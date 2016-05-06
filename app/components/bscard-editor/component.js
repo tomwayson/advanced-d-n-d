@@ -60,8 +60,8 @@ export default Ember.Component.extend({
     let crackcss = {
       display:"none"
     };
-    //default insertionPoint
-    let currentInsertionPoint = {};
+    // insert before or after this card? default to after
+    let insertAfter = false;
 
     /**
      * Determine if we are close to an edge...
@@ -78,8 +78,7 @@ export default Ember.Component.extend({
         "height":card.height,
         "width":"4px"
       };
-      currentInsertionPoint.x = this.get('model.x');
-      currentInsertionPoint.y = this.get('model.y');
+      insertAfter = false;
     }
 
     //Close to the right
@@ -93,16 +92,13 @@ export default Ember.Component.extend({
         "height":card.height,
         "width":"4px"
       };
-      currentInsertionPoint.x = this.get('model.x') + this.get('model.width');
-      currentInsertionPoint.y = this.get('model.y');
+      insertAfter = true;
     }
 
     //Close to the top
     //console.log( 'card.top:' + card.top + ' y: ' + mousePos.y +' prx: ' + (card.top + proximity));
     if(mousePos.y > card.top && mousePos.y < (card.top + yProximity) ){
 
-      currentInsertionPoint.x = this.get('model.x');
-      currentInsertionPoint.y = this.get('model.y');
       crackcss = {
         "display":"block",
         "background-color":"purple",
@@ -111,13 +107,12 @@ export default Ember.Component.extend({
         "height":"4px",
         "width":card.width
       };
+      insertAfter = false;
     }
 
     //Close to the bottom
     if(mousePos.y > (card.bottom - yProximity) && mousePos.y < (card.bottom) ){
 
-      currentInsertionPoint.x = this.get('model.x');
-      currentInsertionPoint.y = this.get('model.y') + this.get('model.height');
       crackcss = {
         "display":"block",
         "background-color":"navy",
@@ -126,11 +121,15 @@ export default Ember.Component.extend({
         "height":"4px",
         "width":card.width
       };
+      insertAfter = true;
     }
     //set the crack css
     Ember.$('.crack').css(crackcss);
-    //set the drop position
-    this.set('eventBus.dropPosition', currentInsertionPoint);
+    // set target card and before/after
+    this.set('eventBus.dropCardInfo', {
+      card: this.get('model'),
+      insertAfter
+    });
 
   },
 
