@@ -60,19 +60,26 @@ export default Ember.Component.extend({
 
     console.info('Card: top: ' + card.top + ' bottom: ' + card.bottom + ' left: ' + card.left + ' Right: ' + card.right);
 
-    let proximity = 20;
+    let proximity = card.wd / 2;
     let targetClass = '';
     let currentInsertionPoint = {};
     //Close to the left
     if(mousePos.x < proximity){
-      targetClass='drop-left';
+      //targetClass='drop-left';
+      Ember.$('.crack').css({
+        "display":"block",
+        "top":card.top,
+        "left":card.left,
+        "height":card.ht,
+        "width":"4px"
+      });
       currentInsertionPoint.x = this.get('model.x');
       currentInsertionPoint.y = this.get('model.y');
     }
 
     //Close to the right
     if(mousePos.x > ( card.wd - proximity ) ) {
-      targetClass= 'drop-right';
+      //targetClass= 'drop-right';
       currentInsertionPoint.x = this.get('model.x') + this.get('model.width');
       currentInsertionPoint.y = this.get('model.y');
     }
@@ -80,14 +87,14 @@ export default Ember.Component.extend({
     //Close to the top
     //console.log( 'card.top:' + card.top + ' y: ' + mousePos.y +' prx: ' + (card.top + proximity));
     if(mousePos.y > card.top && mousePos.y < (card.top + proximity) ){
-      targetClass= 'drop-top';
+      //targetClass= 'drop-top';
       currentInsertionPoint.x = this.get('model.x');
       currentInsertionPoint.y = this.get('model.y');
     }
 
     //Close to the bottom
     if(mousePos.y > (card.top + card.ht - proximity) && mousePos.y < (card.top + card.ht) ){
-      targetClass= 'drop-bottom';
+      //targetClass= 'drop-bottom';
       currentInsertionPoint.x = this.get('model.x');
       currentInsertionPoint.y = this.get('model.y') + this.get('model.height');
     }

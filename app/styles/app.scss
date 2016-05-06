@@ -30,6 +30,12 @@ $link-color: #555555;
   margin-bottom:10px;
 }
 
+.crack {
+  background-color:purple;
+  position: absolute;
+  display:none;
+}
+
 .draggable {
   border: 1px solid #ff0000;
   width:50px;
