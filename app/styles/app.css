@@ -1,0 +1,31 @@
+.drag-handle-add-row {
+  width: 100%;
+  min-height: 38px;
+  padding: .5em;
+  border: 1px solid #ddd;
+  text-align: center;
+  margin-bottom: 1em;
+}
+
+.page-layout-editor {
+  width: 100%;
+  min-height: 60px;
+}
+.layout-row-editor {
+  min-height: 60px;
+  border: 1px solid #ccc;
+  margin-bottom: 10px;
+}
+.layout-row-editor.active {
+  background-color: aliceblue;
+}
+.drag-handle-move-row {
+  float: right;
+  width: 20px;
+  height: 20px;
+  border: 1px solid #ccc;
+  padding: 2px;
+  line-height: 0.9;
+  text-align: center;
+  color: #ccc;
+}

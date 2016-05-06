@@ -1,0 +1,9 @@
+{{log hasRows}}
+{{#if hasRows}}
+  {{#each rows as |row|}}
+    {{layout-row-editor model=row onDrop=(action 'onRowDrop') onStartMove=(action 'onStartMove') }}
+  {{/each}}
+{{else}}
+  Start by dragging a row here.
+{{/if}}
+{{yield}}
