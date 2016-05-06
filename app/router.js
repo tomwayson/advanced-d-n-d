@@ -10,6 +10,7 @@ Router.map(function() {
   this.route('rows');
   this.route('cards');
 
+
 });
 
 export default Router;
