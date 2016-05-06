@@ -27,5 +27,11 @@ export default Ember.Component.extend({
     this.sendAction('onDrop', e, this.model);
     // don't return false, we want this to bubble
     return true;
+  },
+  actions: {
+    onRowDragStart (e) {
+      e.dataTransfer.setData('text/plain', 'moveRow');
+      this.sendAction('onStartMove', e, this.model);
+    }
   }
 });

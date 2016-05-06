@@ -17,7 +17,11 @@ export default Ember.Component.extend({
 
   actions: {
     onRowDrop(e, row) {
-      this.sendAction('onDrop', e, row);
+      this.sendAction('onDrop', e, row, this.get('moveRow'));
+      this.set('moveRow', null);
+    },
+    onStartMove(e, row) {
+      this.set('moveRow', row);
     }
     // onRowDragEnter(row) {
     //   this.set('dragOverRow', row);

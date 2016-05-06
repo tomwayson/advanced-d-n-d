@@ -1,6 +1,5 @@
-<div class="row">
-  <div class="col-md-12">
-    {{model.message}}
-    {{yield}}
-  </div>
+<div  draggable=true ondragstart={{action "onRowDragStart"}} class="drag-handle-move-row">+</div>
+<div>
+  {{model.message}}
+  {{yield}}
 </div>

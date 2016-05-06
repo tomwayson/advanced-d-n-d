@@ -19,3 +19,13 @@
 .layout-row-editor.active {
   background-color: aliceblue;
 }
+.drag-handle-move-row {
+  float: right;
+  width: 20px;
+  height: 20px;
+  border: 1px solid #ccc;
+  padding: 2px;
+  line-height: 0.9;
+  text-align: center;
+  color: #ccc;
+}
