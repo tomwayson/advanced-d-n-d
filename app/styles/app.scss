@@ -1,0 +1,48 @@
+$gray-dark: #333333;
+$link-color: #555555;
+
+
+@import 'layout-cards-editor';
+@import 'tom';
+@import 'bs-cards-editor';
+
+.card-hover {
+  background-color:purple;
+}
+
+.drop-right {
+  border-right: 3px solid cyan;
+}
+
+.drop-left {
+  border-left: 3px solid cyan;
+}
+
+.drop-top {
+  border-top: 3px solid cyan;
+}
+
+.drop-bottom {
+  border-bottom: 3px solid cyan;
+}
+
+.layout-cards-editor {
+  border:1px solid red;
+  margin-bottom:10px;
+}
+
+.crack {
+  background-color:purple;
+  position: absolute;
+  display:none;
+  border-radius:2px;
+}
+
+.draggable {
+  border: 1px solid #ff0000;
+  width:50px;
+  height:50px;
+  margin:10px;
+  text-align:center;
+
+}

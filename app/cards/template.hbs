@@ -1,0 +1,28 @@
+<div class="container">
+  <div class="row">
+    <div class="col-md-6">
+      <h2>HTML 5 Drag</h2>
+      <p>The [Drag Me] div uses HTML5 drag and drop events to cause the "card editor"
+        component to display a "drop-point" using
+      an absolutely positioned div. This works pretty well.</p>
+      <p>The empty area, uses a drop event to add in the first card.</p>
+    </div>
+    <div class="col-md-6">
+      <h2>JQuery.draggable() Cards</h2>
+      <p>The cards rely on jQuery.draggable() for re-positioning, and despite the name, this does not
+        use HTML5 Drag events... so, we don't get out drop-target interactions.
+      </p>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <div class="draggable" draggable="true">DRAG ME</div>
+    </div>
+  </div>
+</div>
+<div class="crack"></div>
+<div class="container">
+  {{#each model.rows as |row|}}
+  {{layout-cards-editor cards=row.cards}}
+  {{/each}}
+</div>

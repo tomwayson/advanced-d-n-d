@@ -4,7 +4,10 @@ var EmberApp = require('ember-cli/lib/broccoli/ember-app');
 
 module.exports = function(defaults) {
   var app = new EmberApp(defaults, {
-    // Add options here
+    sassOptions: {
+
+      sourceMap: false,
+    },
   });
 
   // Use `app.import` to add additional libraries to the generated
@@ -19,6 +22,16 @@ module.exports = function(defaults) {
   // modules that you would like to import into your application
   // please specify an object with the list of modules as keys
   // along with the exports of each module as its value.
-
+  //
+  app.import('./bower_components/jquery-ui/ui/core.js');
+  app.import('./bower_components/jquery-ui/ui/widget.js');
+  app.import('./bower_components/jquery-ui/ui/mouse.js');
+  app.import('./bower_components/jquery-ui/ui/draggable.js');
+  app.import('./bower_components/jquery-ui/ui/resizable.js');
+  app.import('./bower_components/jquery-ui/themes/base/core.css');
+  app.import('./bower_components/jquery-ui/themes/base/resizable.css');
+  app.import('./bower_components/jquery-ui/themes/base/draggable.css');
+  app.import('./bower_components/jquery-ui/themes/base/theme.css');
+  app.import('./bower_components/lodash/lodash.js');
   return app.toTree();
 };

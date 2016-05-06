@@ -1,0 +1,28 @@
+<div class="container">
+  <div class="row">
+    <div class="col-md-6">
+      <h2>HTML 5 Drag</h2>
+      <p>The [Drag Me] div uses HTML5 drag and drop events to cause the "card editor"
+        component to display a "drop-point" using
+      an absolutely positioned div. This works pretty well.</p>
+
+    </div>
+    <div class="col-md-6">
+      <h2>Cards</h2>
+      <p>The idea here would be to drop cards into "rows" and have them initially, split
+        but then be re-sizable. Work still needs to be done around this
+      </p>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <div class="draggable" draggable="true">DRAG ME</div>
+    </div>
+  </div>
+</div>
+
+<div class="crack"></div>
+
+{{#each model.sections as |section|}}
+  {{layout-section model=section}}
+{{/each}}
