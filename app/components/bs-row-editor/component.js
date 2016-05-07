@@ -146,12 +146,16 @@ export default Ember.Component.extend({
       if(targetCard.width > 1 ){
         if(targetCard.minWidth && targetCard.width === targetCard.minWidth){
           //we can't split this either
+          console.error('Card can not be dropped at this location.');
         }else{
           //ok we can split
-          let halfWidth = targetCard.width / 2;
-          Ember.set(targetCard,'width',halfWidth);
+
+          let halfWidth = (targetCard.width / 2);
+
+          Ember.set(targetCard,'width',Math.ceil(halfWidth));
+
           newCard = {
-            "width":halfWidth,
+            "width":Math.floor(halfWidth),
             "height": 4,
             "component": {"name": "placeholder-card"}
           };
@@ -159,22 +163,27 @@ export default Ember.Component.extend({
           this._insertCard(newCard, targetCard, insertAfter);
         }
       }
-
     }else{
-      //we are inserting into a new row...
-      // TODO: what size should it be?
-        newCard = {
-          "width":4,
-          "height": 4,
-          "component": {"name": "placeholder-card"}
-        };
-        // insert the card
-        this._insertCard(newCard, targetCard, insertAfter);
+      console.error('Card can not be dropped at this location.');
     }
+
+    // else{
+    //   //we are inserting into a new row...
+    //   // TODO: what size should it be?
+    //     newCard = {
+    //       "width":4,
+    //       "height": 4,
+    //       "component": {"name": "placeholder-card"}
+    //     };
+    //     // insert the card
+    //     this._insertCard(newCard, targetCard, insertAfter);
+    // }
 
     // clear event bus state
     eventBus.set('dropCardInfo', null);
   },
+
+
 
 
 
