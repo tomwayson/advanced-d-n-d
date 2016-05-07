@@ -36,7 +36,10 @@ export default Ember.Component.extend({
 
   drop(event){
     let td = this.get('eventBus.transferData');
-    console.info('DROP ON PAGE-LAYOUT-EDITOR ' + this.get('elementId') + ' for ' + td.objectType);
+    if(td){
+      console.info('DROP ON PAGE-LAYOUT-EDITOR ' + this.get('elementId') + ' for ' + td.objectType);
+    }
+
 
   },
 

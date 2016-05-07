@@ -10,7 +10,7 @@ export default Ember.Component.extend({
   eventBus: Ember.inject.service('event-bus'),
 
   dragStart(event){
-    console.log('DRAGGABLE-OBJECT Start for  ' + this.get('dragType'));
+    console.log('DRAGGABLE-OBJECT Start for  ' + this.get('objectType'));
     //set the type
     //event.dataTransfer.setData('text/plain', this.get('dragType'));
     this.set('eventBus.transferData', {

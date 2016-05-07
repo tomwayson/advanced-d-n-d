@@ -27,7 +27,7 @@ export default Ember.Component.extend({
   dragEnter(event){
 
     let td = this.get('eventBus.transferData');
-    console.info('DRAGENTER ON CARD ' + this.get('elementId') + ' for ' + td.type);
+    //console.info('DRAGENTER ON CARD ' + this.get('elementId') + ' for ' + td.type);
 
     //preventDefault for valid objects of correct type
     // if(td.type === 'card'){
@@ -49,21 +49,19 @@ export default Ember.Component.extend({
     }
     //low-level DOM api for-the-win
     let card = componentElement.getBoundingClientRect();
-    this.set('cardPosition',card);
+    //console.info('RAW: top: ' + card.top + ' bottom: ' + card.bottom + ' scy: ' + window.scrollY + ' H: ' + (card.bottom - card.top) );
+    //this.set('componentPosition',card);
     //TODO: Ensure this works in target browsers
-    // card.top = card.top + window.scrollY;
-    // card.left = card.top + window.scrollX;
-    this.set('cardPosition',card);
-    // this.set('cardPosition', {
-    //   top: card.top,
-    //   left: card.left,
-    //   bottom: card.bottom,
-    //   rigth: card.right,
-    //   width: card.width,
-    //   height: card.height
-    //
-    // });
-
+    let cp = {
+      top: card.top + window.scrollY,
+      left: card.left + window.scrollX,
+      bottom: card.bottom + window.scrollY,
+      right: card.right + window.scrollX,
+      width: card.width,
+      height: card.height
+    };
+    this.set('componentPosition', cp);
+    //console.info('FIXED: top: ' + cp.top + ' bottom: ' + cp.bottom + ' CH:' + (cp.bottom - cp.top) + ' H:' + cp.height);
   },
 
   /**
@@ -72,7 +70,7 @@ export default Ember.Component.extend({
    */
   drop(event){
     let td = this.get('eventBus.transferData');
-    console.log('DROP ON CARD fired for ' + td.type);
+    //console.log('DROP ON CARD fired for ' + td.type);
     Ember.$('.crack').css({display:"none"});
   },
 
@@ -81,18 +79,19 @@ export default Ember.Component.extend({
 
     //get the x,y from the event
     let mousePos = {
-      x: event.originalEvent.clientX ,
-      y: event.originalEvent.clientY
+      x: event.originalEvent.clientX + window.scrollX,
+      y: event.originalEvent.clientY + window.scrollY
     };
 
     //get the card rectangle
-    let card = this.get('cardPosition');
+    let card = this.get('componentPosition');
 
-    //console.info('Card: top: ' + card.top + ' Y: ' + mousePos.y + ' bottom: ' + card.bottom + ' left: ' + card.left + ' X: ' + mousePos.x +' Right: ' + card.right);
+    //console.info('Card: top: ' + card.top + ' cY: ' + mousePos.y + ' bottom: ' + card.bottom + ' left: ' + card.left + ' cX: ' + mousePos.x +' Right: ' + card.right);
 
     //when you are within 1/4 of the dimension
-    let xProximity = card.width / 4;
-    let yProximity = card.height / 4;
+    let xProximity = card.width / 3;
+    let yProximity = card.height / 3;
+    let inset = 10;
     //default crack css
     let crackcss = {
       display:"none"
@@ -110,10 +109,10 @@ export default Ember.Component.extend({
 
         crackcss = {
           "display":"block",
-          "background-color":"green",
-          "top":card.top,
-          "left":card.left,
-          "height":card.height,
+          "background-color":"#666666",
+          "top":card.top + inset,
+          "left":card.left + inset,
+          "height":card.height - (2 * inset),
           "width":"4px"
         };
         insertAfter = false;
@@ -124,10 +123,10 @@ export default Ember.Component.extend({
 
         crackcss = {
           "display":"block",
-          "background-color":"cyan",
-          "top":card.top,
-          "left":card.right,
-          "height":card.height,
+          "background-color":"#666666",
+          "top":card.top + inset,
+          "left":card.right - inset,
+          "height":card.height - (2 * inset),
           "width":"4px"
         };
         insertAfter = true;
@@ -135,32 +134,32 @@ export default Ember.Component.extend({
     }
     //Close to the top
     //console.log( 'card.top:' + card.top + ' y: ' + mousePos.y +' prx: ' + (card.top + proximity));
-    if(mousePos.y > card.top && mousePos.y < (card.top + yProximity) ){
-
-      crackcss = {
-        "display":"block",
-        "background-color":"purple",
-        "top":card.top,
-        "left":card.left,
-        "height":"4px",
-        "width":card.width
-      };
-      insertAfter = false;
-    }
-
-    //Close to the bottom
-    if(mousePos.y > (card.bottom - yProximity) && mousePos.y < (card.bottom) ){
-
-      crackcss = {
-        "display":"block",
-        "background-color":"navy",
-        "top":card.bottom,
-        "left":card.left,
-        "height":"4px",
-        "width":card.width
-      };
-      insertAfter = true;
-    }
+    // if(mousePos.y > card.top && mousePos.y < (card.top + yProximity) ){
+    //
+    //   crackcss = {
+    //     "display":"block",
+    //     "background-color":"purple",
+    //     "top":card.top + inset,
+    //     "left":card.left + inset,
+    //     "height":"4px",
+    //     "width":card.width - (2 * inset)
+    //   };
+    //   insertAfter = false;
+    // }
+    //
+    // //Close to the bottom
+    // if(mousePos.y > (card.bottom - yProximity) && mousePos.y < (card.bottom) ){
+    //
+    //   crackcss = {
+    //     "display":"block",
+    //     "background-color":"navy",
+    //     "top":card.bottom + inset,
+    //     "left":card.left + inset,
+    //     "height":"4px",
+    //     "width":card.width - (2 * inset)
+    //   };
+    //   insertAfter = true;
+    // }
     //set the crack css
     Ember.$('.crack').css(crackcss);
     // set target card and before/after
@@ -175,7 +174,7 @@ export default Ember.Component.extend({
 
   dragLeave(event){
 
-    console.log('DRAG LEAVE ON CARD : event.target.className: ' + event.target.className);
+    //console.log('DRAG LEAVE ON CARD : event.target.className: ' + event.target.className);
     if(!this.get('ignoreNextLeave')) {
       this.set('dropTargetClass', '');
 

@@ -27,7 +27,7 @@ export default Ember.Component.extend({
 
     //preventDefault for valid objects of correct type
     if(td.objectType === 'card'){
-      console.info('DRAGENTER ON ROW ' + this.get('elementId') + ' for ' + td.objectType);
+      //console.info('DRAGENTER ON ROW ' + this.get('elementId') + ' for ' + td.objectType);
       event.preventDefault();
     }
     //getComponentElement
@@ -44,7 +44,18 @@ export default Ember.Component.extend({
       }
     }
     let componentPosition = componentElement.getBoundingClientRect();
-    this.set('componentPosition',componentPosition);
+
+    let cp = {
+      top: componentPosition.top + window.scrollY,
+      left: componentPosition.left + window.scrollX,
+      bottom: componentPosition.bottom + window.scrollY,
+      rigth: componentPosition.right + window.scrollX,
+      width: componentPosition.width,
+      height: componentPosition.height
+    };
+
+
+    this.set('componentPosition',cp);
 
   },
 
@@ -57,15 +68,15 @@ export default Ember.Component.extend({
     event.preventDefault();
     //get the x,y from the event
     let mousePos = {
-      x: event.originalEvent.clientX ,
-      y: event.originalEvent.clientY
+      x: event.originalEvent.clientX + window.scrollX,
+      y: event.originalEvent.clientY + window.scrollY
     };
     let crackcss = {
       display:"none"
     };
     //get the card rectangle
     let componentPosition = this.get('componentPosition');
-    let proximity = 5;
+    let proximity = componentPosition.height / 4;
     let insertAfter = false;
     let transferAction = td.action;
 
@@ -113,7 +124,8 @@ export default Ember.Component.extend({
   },
 
   drop(event){
-
+    //set the crack css
+    this.$('.row-crack').css({"display":"none"});
     // TODO: are we adding a card or moving a card?
     // for now only adding
     // where to place the card?

@@ -34,17 +34,12 @@ $link-color: #555555;
   margin-bottom:10px;
 }
 
-.crack {
-  background-color:purple;
+.crack, .card-crack, .row-crack {
   position: absolute;
   display:none;
   border-radius:2px;
 }
-.row-crack {
-  position: absolute;
-  display:none;
-  border-radius:2px;
-}
+
 
 .draggable {
   border: 1px solid #ff0000;
