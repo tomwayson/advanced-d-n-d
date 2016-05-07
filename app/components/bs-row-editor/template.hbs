@@ -1,3 +1,5 @@
 {{#each model.cards as |card|}}
-  {{bscard-editor model=card }}
+  {{bscard-editor model=card
+                  onCardDelete=(action 'onCardDelete')}}
 {{/each}}
+<div class="row-crack"></div>

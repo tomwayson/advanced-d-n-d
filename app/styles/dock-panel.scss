@@ -1,0 +1,13 @@
+#dockPanel{
+  position:fixed;
+  top:0px;
+  left:0px;
+  width: 160px;
+  height: 500px;
+  z-index: 50;
+  border:2px solid #666666;
+  background-color:#cccccc;
+  .draggable{
+    float:left;
+  }
+}

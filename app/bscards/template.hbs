@@ -14,15 +14,13 @@
       </p>
     </div>
   </div>
-  <div class="row">
-    <div class="col-md-6">
-      <div class="draggable" draggable="true">DRAG ME</div>
-    </div>
-  </div>
+
 </div>
 
+<div id="dockPanel">
+  {{#draggable-object objectType='card' action='add-card'}}CARD{{/draggable-object}}
+  {{#draggable-object objectType='section'  action='add-section'}}SECT{{/draggable-object}}
+</div>
 <div class="crack"></div>
 
-{{#each model.sections as |section|}}
-  {{layout-section-editor model=section}}
-{{/each}}
+{{page-layout-editor model=model}}

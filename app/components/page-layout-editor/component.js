@@ -5,15 +5,40 @@ export default Ember.Component.extend({
   layout,
   classNames: ['page-layout-editor'],
 
-  // drop(e) {
-  //   const dragOverRow = this.get('dragOverRow');
-  //   this.sendAction('onDrop', e, dragOverRow);
-  //   this.set('dragOverRow', null);
-  // },
-
-  hasRows: Ember.computed('rows.length', function() {
-    return this.get('rows.length') > 0;
+  hasSections: Ember.computed('model.sections.length', function() {
+    return this.get('model.sections.length') > 0;
   }),
+
+
+  /**
+   * Get the event bus
+   */
+  eventBus: Ember.inject.service('event-bus'),
+
+  dragEnter(event){
+    let td = this.get('eventBus.transferData');
+
+    if(td.objectType==='section'){
+      console.info('PAGE-LAYOUT-EDITOR VALID DROP TARGET FOR ' + td.objectType);
+      event.preventDefault()
+    }
+  },
+
+  dragOver(event){
+    //can accept a section
+    let td = this.get('eventBus.transferData');
+
+    if(td.objectType==='section'){
+      console.info('PAGE-LAYOUT-EDITOR VALID DROP TARGET FOR ' + td.objectType);
+      event.preventDefault()
+    }
+  },
+
+  drop(event){
+    let td = this.get('eventBus.transferData');
+    console.info('DROP ON PAGE-LAYOUT-EDITOR ' + this.get('elementId') + ' for ' + td.objectType);
+
+  },
 
   actions: {
     onRowDrop(e, row) {
