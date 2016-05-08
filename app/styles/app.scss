@@ -5,6 +5,7 @@ $link-color: #555555;
 @import 'bs-row-editor';
 @import 'layout-cards-editor';
 @import 'bs-cards-editor';
+@import 'dock-panel';
 // TODO: replace w/ 1 per component, or remove?
 @import 'tom';
 
@@ -33,12 +34,12 @@ $link-color: #555555;
   margin-bottom:10px;
 }
 
-.crack {
-  background-color:purple;
+.crack, .card-crack, .row-crack {
   position: absolute;
   display:none;
   border-radius:2px;
 }
+
 
 .draggable {
   border: 1px solid #ff0000;

@@ -7,51 +7,57 @@ export default Ember.Route.extend({
       "sections": [
         {
           "containment":"fixed",
-          "rows": []
+          "style":"background-color:#E31D1A; color:white;",
+          "rows": [
+            {
+              "cards":[
+                {
+                  "width":6,"component": {"name": "placeholder-card"}
+                },
+                {
+                  "width":6,"component": {"name": "placeholder-card"}
+                }
+              ]
+            }
+          ]
         },
         {
           "containment":"fixed",
+          "style":"background-color:#666666; color:white;",
           "rows":[
             {
               "cards":[
                 {
-                  "width":4,
-                  "height": 4,
-                  "component": {"name": "placeholder-card"}
+                  "width":4,"component": {"name": "placeholder-card"}
                 },
                 {
-                  "width":4,
-                  "height": 4,
-                  "component": {"name": "placeholder-card"}
+                  "width":4,"component": {"name": "placeholder-card"}
                 },
                 {
-                  "width":4,
-                  "height": 4,
-                  "component": {"name": "placeholder-card"}
+                  "width":4,"component": {"name": "placeholder-card"}
                 }
               ]
             },
             {
               "cards":[
                 {
-                  "width":6,
-                  "height": 4,
-                  "component": {"name": "placeholder-card"}
+                  "width":6,"component": {"name": "placeholder-card"}
                 },
                 {
-                  "width":6,
-                  "height": 4,
-                  "component": {"name": "placeholder-card"}
+                  "width":6,"component": {"name": "placeholder-card"}
                 }
               ]
-            },
+            }
+
+          ]
+        },
+        {
+          "containment":"fixed",
+          "style":"background-color:#FFFFCC ;color:#666666",
+          "rows":[
             {
               "cards":[
-                {
-                  "width":12,
-                  "height": 4,
-                  "component": {"name": "placeholder-card"}
-                }
+                { "width":12,"component": {"name": "placeholder-card"} }
               ]
             }
           ]

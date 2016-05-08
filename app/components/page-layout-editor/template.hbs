@@ -1,9 +1,14 @@
-{{log hasRows}}
-{{#if hasRows}}
-  {{#each rows as |row|}}
-    {{layout-row-editor model=row onDrop=(action 'onRowDrop') onStartMove=(action 'onStartMove') }}
+
+{{#if hasSections}}
+  {{#each model.sections as |section|}}
+    {{layout-section-editor model=section}}
   {{/each}}
 {{else}}
-  Start by dragging a row here.
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <h2>Drag a card a component here</h2>
+      </div>
+    </div>
+  </div>
 {{/if}}
-{{yield}}
