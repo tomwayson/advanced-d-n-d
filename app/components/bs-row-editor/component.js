@@ -3,6 +3,45 @@ import Ember from 'ember';
 export default Ember.Component.extend({
   classNames:['row', 'bs-row-editor'],
   eventBus: Ember.inject.service(),
+  resizerModel: {},
+  // didInsertElement: function(){
+  //   //setup drag handlers for the splitter
+  //   //we do this as raw dom b/c it side-steps
+  //   //the ember render loop which is needed to
+  //   //get the perf we need
+  //
+  //   this.$('.splitter').on('mousedown', this.splitterMouseDown);
+  //   this.$('.splitter').on('mouseup', this.splitterMouseUp);
+  //   this.$('.splitter').on('mousemove', this.splitterMouseMove);
+  //
+  // },
+  // willDestroyElement() {
+  //   this._super(...arguments);
+  //   //remove handlers...
+  //   this.$('.splitter').off('mousedown');
+  //   this.$('.splitter').off('mouseup');
+  //   this.$('.splitter').off('mousemove');
+  // },
+  // splitterState: {
+  //   visible: false,
+  //   isDragging: false,
+  //   canResize: false
+  // },
+  // splitterMouseDown(event){
+  //   console.log('Splitter Mouse Down');
+  //   //this.splitterState.isDragging = true;
+  // },
+  // splitterMouseUp(event){
+  //   console.log('Splitter Mouse Up');
+  //   //this.splitterState.isDragging = false;
+  // },
+  // splitterMouseMove(event){
+  //   if(this.splitterState.isDragging){
+  //     console.log('Dragging Splitter...');
+  //   }else{
+  //     console.log('Splitter mousemove');
+  //   }
+  // },
 
   // insert a card either at the begining
   // or before/after the target card
@@ -187,10 +226,9 @@ export default Ember.Component.extend({
   },
 
 
-
   mouseLeave(event){
-    //when the mouse leaves this component, we should hide all splitters and crack
-    this.$('.splitter').css({'display':'none'});
+    //when the mouse leaves this component, we should hide all resizers and crack
+    this.set('showResizer', false);
   },
 
   /**
@@ -243,10 +281,17 @@ export default Ember.Component.extend({
       }
 
     },
-    onResizeMove(){
-
-    },
     onShowCardResize(card, edge, cardPosition){
+      //Scenarios
+      //- if both cards.width > min-width
+      //  - show bi-directional
+      //- if right-card = min-width
+      //  - show left-only splitter
+      //- if left-card = min-width
+      //  - show right-only splitter
+      //- if both cards = min-width
+      //  - show no-resize splitter
+
       //given a card in this row, it's positional information and a mouseEvent...
       //decide how to show what sort of splitter
       let cardCount = this.get('model.cards.length');
@@ -265,15 +310,39 @@ export default Ember.Component.extend({
       //if this is the first card, and the requested edge is left, return
       if(cardIdx === 0 && edge === 'left'){
         console.info('Rejecting Left Resize for First Card');
-        this.set('showResizer', false);
         return;
       }
       //if this is the last card, and the requested edge  is right, return
       if(cardIdx === (cardCount - 1) && edge === 'right'){
         console.info('Rejecting Right Resize for Last Card');
-        this.set('showResizer', false);
         return;
       }
+
+      //get the impactedNeighbor
+      let neighborIndex = ( edge === 'right' ) ? cardIdx + 1 : cardIdx -1;
+
+      let impactedNeighbor = this.get('model.cards').objectAt(neighborIndex);
+
+      let showLeftSizer = false;
+      let showRightSizer = false;
+
+      if(impactedNeighbor.width > 1){
+        //we can show the edgeSide
+        if(edge === 'right'){
+          showRightSizer = true;
+        }else{
+          showLeftSizer= true;
+        }
+      }
+      if(card.width > 1){
+        //we can show the nonedgeside
+        if(edge === 'right'){
+          showLeftSizer = true;
+        }else{
+          showRightSizer= true;
+        }
+      }
+
 
       //ok - we need to show something... which means we need positional information
       let leftPos = cardPosition.left;
@@ -282,14 +351,41 @@ export default Ember.Component.extend({
       }
 
       let resizerModel = {
-        "position": {
+        position : {
           "top":cardPosition.top + 10,
           "bottom":cardPosition.bottom - 10,
           "left":leftPos - 9,
-          "height":cardPosition.height - 20
-        }
+          "height":cardPosition.height - 20,
+        },
+        showRightSizer: showRightSizer,
+        showLeftSizer: showLeftSizer,
+        cardIndex: cardIdx,
+        edge: edge
       };
       this.set('resizerModel', resizerModel);
+      this.set('showResizer', true);
+
+    },
+
+    onShift(cardIndex, edge, direction){
+      console.log('BSROWEDITOR onShift ' + cardIndex + ' ' + edge);
+      let rightCard;
+      let  leftCard;
+      if(edge==="right"){
+        leftCard = this.get('model.cards').objectAt(cardIndex);
+        rightCard = this.get('model.cards').objectAt(cardIndex + 1);
+      }else{
+        rightCard = this.get('model.cards').objectAt(cardIndex);
+        leftCard = this.get('model.cards').objectAt(cardIndex -1);
+      }
+      if(direction ==='right'){
+        Ember.set(rightCard, 'width', rightCard.width - 1);
+        Ember.set(leftCard, 'width', leftCard.width + 1);
+      }else{
+        Ember.set(leftCard, 'width', leftCard.width - 1);
+        Ember.set(rightCard, 'width', rightCard.width + 1);
+      }
+      this.set('showResizer', false);
     }
   }
 

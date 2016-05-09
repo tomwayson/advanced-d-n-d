@@ -5,6 +5,8 @@
                   onCardDelete=(action 'onCardDelete')}}
 {{/each}}
 <div class="row-crack"></div>
-
-{{card-resizer model=resizerModel
-                onResizeMove=(action 'onResizeMove')}}
+{{#if showResizer}}
+  {{card-resizer model=resizerModel
+                 onShift=(action 'onShift')
+               }}
+{{/if}}
