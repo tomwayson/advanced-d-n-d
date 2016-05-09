@@ -3,9 +3,6 @@ import Ember from 'ember';
 export default Ember.Component.extend({
   classNames:['card-editor'],
   classNameBindings:['bootstrapGridClass'],
-  attributeBindings:['draggable'],
-  //make this component draggable
-  draggable:true,
 
   bootstrapGridClass:Ember.computed('model.width', function(){
     return 'col-md-' + this.get('model.width');
@@ -168,8 +165,7 @@ export default Ember.Component.extend({
       card: this.get('model'),
       insertAfter:insertAfter
     });
-    this.set('eventBus.transferData.action','add-card');
-
+    this.set('eventBus.transferData.action', td.dragType + '-card');
   },
 
   dragLeave(event){
@@ -186,6 +182,9 @@ export default Ember.Component.extend({
   actions: {
     onModelChanged() {
 
+    },
+    onDragStart() {
+      this.sendAction('onCardDrag');
     },
     deleteCard(){
       Ember.debug('bscard-editor:deleteCard...');

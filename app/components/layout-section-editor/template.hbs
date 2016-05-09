@@ -1,7 +1,7 @@
 <div class="{{containerClass}}" >
   {{#each model.rows as |row|}}
     {{bs-row-editor model=row
-                    onRowDelete=(action 'onRowDelete')}}
+                    onRowDelete=(action 'onRowDelete') onCardDelete=(action 'onCardDelete')}}
   {{/each}}
 
 </div>

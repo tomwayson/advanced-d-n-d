@@ -12,10 +12,10 @@ export default Ember.Route.extend({
             {
               "cards":[
                 {
-                  "width":6,"component": {"name": "placeholder-card"}
+                  "width":6,"component": {"name": "placeholder-card", settings: {"id": 0}}
                 },
                 {
-                  "width":6,"component": {"name": "placeholder-card"}
+                  "width":6,"component": {"name": "placeholder-card", settings: {"id": 1}}
                 }
               ]
             }
@@ -28,23 +28,23 @@ export default Ember.Route.extend({
             {
               "cards":[
                 {
-                  "width":4,"component": {"name": "placeholder-card"}
+                  "width":4,"component": {"name": "placeholder-card", settings: {"id": 2}}
                 },
                 {
-                  "width":4,"component": {"name": "placeholder-card"}
+                  "width":4,"component": {"name": "placeholder-card", settings: {"id": 3}}
                 },
                 {
-                  "width":4,"component": {"name": "placeholder-card"}
+                  "width":4,"component": {"name": "placeholder-card", settings: {"id": 4}}
                 }
               ]
             },
             {
               "cards":[
                 {
-                  "width":6,"component": {"name": "placeholder-card"}
+                  "width":6,"component": {"name": "placeholder-card", settings: {"id": 5}}
                 },
                 {
-                  "width":6,"component": {"name": "placeholder-card"}
+                  "width":6,"component": {"name": "placeholder-card", settings: {"id": 6}}
                 }
               ]
             }
@@ -57,7 +57,7 @@ export default Ember.Route.extend({
           "rows":[
             {
               "cards":[
-                { "width":12,"component": {"name": "placeholder-card"} }
+                { "width":12,"component": {"name": "placeholder-card", settings: {"id": 7}} }
               ]
             }
           ]

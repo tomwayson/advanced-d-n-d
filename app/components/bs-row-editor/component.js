@@ -126,20 +126,19 @@ export default Ember.Component.extend({
   drop(event){
     //set the crack css
     this.$('.row-crack').css({"display":"none"});
-    // TODO: are we adding a card or moving a card?
-    // for now only adding
-    // where to place the card?
     let eventBus = this.get('eventBus');
     let td = this.get('eventBus.transferData');
-    if(td.action !== 'add-card'){
+    // row handler only supports adding/moving cards
+    if(td.action !== 'add-card' && td.action !== 'move-card'){
       console.log('BS-ROW-EDITOR: skipping DROP for ' + this.get('elementId') + ' caught drop for type ' + td.objectType + ' Action: ' + td.action);
       return;
     }
     console.log('BS-ROW-EDITOR: Processing DROP for ' + this.get('elementId') + ' caught drop for type ' + td.objectType + ' Action: ' + td.action);
-    let targetCard, insertAfter, newCard;
+    let newCard = td.model;
+    let targetCard, insertAfter;
     let dropCardInfo = eventBus.get('dropCardInfo');
-    //if we have a card...
     if (dropCardInfo) {
+      // our drop target is a card
       targetCard = dropCardInfo.card;
       insertAfter = dropCardInfo.insertAfter;
       //targetCard needs to be >1 wide...
@@ -147,21 +146,25 @@ export default Ember.Component.extend({
         if(targetCard.minWidth && targetCard.width === targetCard.minWidth){
           //we can't split this either
           console.error('Card can not be dropped at this location.');
+          // TODO: return?
         }else{
           //ok we can split
-
+          // if we're moving a card, need to first
+          // remove it from it's original row
+          if (td.dragType === 'move') {
+            this.sendAction('onCardDelete', newCard, td.draggedFromRow);
+          }
+          // make room for the dropped card by
+          // splitting the target card width
           let halfWidth = (targetCard.width / 2);
-
           Ember.set(targetCard,'width',Math.ceil(halfWidth));
-
-          newCard = {
-            "width":Math.floor(halfWidth),
-            "height": 4,
-            "component": {"name": "placeholder-card"}
-          };
+          // set the card width/height based on above calculations
+          Ember.set(newCard, 'width', Math.floor(halfWidth));
           // insert the card
           this._insertCard(newCard, targetCard, insertAfter);
         }
+        // TODO: clear event bus drag state?
+        // here, or below where the drop state is cleared?
       }
     }else{
       console.error('Card can not be dropped at this location.');
@@ -179,7 +182,7 @@ export default Ember.Component.extend({
     //     this._insertCard(newCard, targetCard, insertAfter);
     // }
 
-    // clear event bus state
+    // clear event bus drop state
     eventBus.set('dropCardInfo', null);
   },
 
@@ -191,43 +194,13 @@ export default Ember.Component.extend({
    * Handle actions, bubbling from the cards in the row
    */
   actions: {
+    onCardDrag() {
+      // if card is dragged to another row
+      // make sure it is removed from this row
+      this.set('eventBus.transferData.draggedFromRow', this.get('model'));
+    },
     onCardDelete( cardToDelete ) {
-      let cards= this.get('model.cards');
-
-      //Scenarios:
-      //  Row has one card, and we are deleting it
-      //    - delete the row
-      if(cards.length === 1){
-        this.sendAction('onRowDelete', this.get('model'));
-      }else{
-
-      //  Row has > 1 card to the right of card we are deleting
-      //    - expand card to the right to fill void
-      //
-      //  Row has > 1 card to the left of card we are deleting
-      //    - expand card to the left to fill void
-      //
-
-        //get the index of the card we are about to delete
-        let deletedCardIndex = cards.indexOf( cardToDelete );
-        //assume we will expand the first card (left)...
-        let expandCardIndex = 1;
-        if(deletedCardIndex > 0){
-          //we expand the card at index 1
-          expandCardIndex = deletedCardIndex - 1;
-        }
-        //get the card to expan
-        let expandCard = cards.objectAt(expandCardIndex);
-        //expanded width
-        let expandedWidth = cardToDelete.width + expandCard.width;
-        Ember.set(expandCard, 'width', expandedWidth);
-
-
-        //remove the card
-        this.set('model.cards', this.get('model.cards').without( cardToDelete ));
-
-      }
-
+      this.sendAction('onCardDelete', cardToDelete, this.get('model'));
     }
   }
 
