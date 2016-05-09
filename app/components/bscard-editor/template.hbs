@@ -2,8 +2,8 @@
   <div class="clearfix card-editor-header">
     <div class="pull-left"><small> {{elementId}} </small></div>
     <div class="pull-right">
-      {{#draggable-object dragType="move" objectType="card" model=model onDragStart=(action 'onDragStart') }}
-        <span class="glyphicon glyphicon-move card-editor-drag-handle"/>
+      {{#draggable-object dragType="move" objectType="card" model=model onDragStart=(action 'onDragStart') dragImage=dragImage dragImageOffsetX=dragImageOffsetX }}
+        <span class="glyphicon glyphicon-move card-editor-drag-handle"></span>
       {{/draggable-object}}
       <a href="#" {{action "editCard" model}}><span class="glyphicon glyphicon-cog"/></a>
       <a href="#" {{action "deleteCard" model}}><span class="glyphicon glyphicon-remove"/></a>

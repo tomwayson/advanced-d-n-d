@@ -20,6 +20,16 @@ export default Ember.Component.extend({
 
   ignoreNextLeave:false,
 
+  didInsertElement() {
+    this._super(...arguments);
+    // b/c we're dragging from upper right corner,
+    // want to shift to the left by width of the element
+    // TODO: probably want to set drag image offset x/y dynamically
+    // to account for mouse position over handle
+    const $el = this.$();
+    this.set('dragImage', $el[0]);
+    this.set('dragImageOffsetX', $el.outerWidth());
+  },
 
   dragEnter(event){
 

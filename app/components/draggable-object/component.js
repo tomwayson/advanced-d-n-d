@@ -8,11 +8,15 @@ export default Ember.Component.extend({
   dragType: 'add',
   objectType: 'card',
   action:'add-card',
+  dragImageOffsetX: 0,
+  dragImageOffsetY: 0,
   eventBus: Ember.inject.service('event-bus'),
 
-  dragStart(event){
+  dragStart(e){
     const dragType = this.get('dragType');
     const objectType = this.get('objectType');
+    const dragImage = this.get('dragImage');
+
     console.log('DRAGGABLE-OBJECT Start for  ' + objectType);
     // set the drag properties on the event bus
     this.set('eventBus.transferData', {
@@ -22,6 +26,11 @@ export default Ember.Component.extend({
       action: dragType + '-' + objectType,
       model: this.get('model')
     });
+
+    // set drag image?
+    if (dragImage && e.dataTransfer && e.dataTransfer.setDragImage) {
+      e.dataTransfer.setDragImage(dragImage, this.get('dragImageOffsetX'), this.get('dragImageOffsetY'));
+    }
 
     // let paret know that we've started dragging
     this.sendAction('onDragStart');
