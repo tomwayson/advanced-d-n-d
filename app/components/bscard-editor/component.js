@@ -189,6 +189,95 @@ export default Ember.Component.extend({
     }
   },
 
+  /**
+   * Resize Mouse Actions
+   */
+  mouseDown(event){
+    console.log('BSCARDEDITOR mouseDown...' );
+  },
+
+  mouseUp(event){
+    console.log('BSCARDEDITOR mouseUp...' );
+  },
+
+  mouseMove(event){
+    //Scenarios
+    //- if both cards.width > min-width
+    //  - show bi-directional
+    //- if right-card = min-width
+    //  - show left-only splitter
+    //- if left-card = min-width
+    //  - show right-only splitter
+    //- if both cards = min-width
+    //  - show no-resize splitter
+
+    //if we are close to an edge, show the resizer
+    let mousePos = {
+      x: event.clientX + window.scrollX,
+      y: event.clientY + window.scrollY
+    };
+    let componentPosition = this.getComponentPosition(Ember.$(event.target));
+
+    let resizerProximity = 10;
+  
+    //check if we are close to a splitable edge
+    if(mousePos.x > componentPosition.left && mousePos.x < (componentPosition.left + resizerProximity)){
+      //send event info up
+      this.sendAction('onShowCardResize', this.get('model'), 'left', componentPosition);
+    }
+
+    if(mousePos.x < componentPosition.right && mousePos.x > (componentPosition.right - resizerProximity)){
+      //send event info up
+      this.sendAction('onShowCardResize', this.get('model'), 'right', componentPosition);
+    }
+
+
+  },
+
+  mouseEnter(event){
+    //console.log('BSCARDEDITOR mouseEnter...' );
+    //ensure we have componentPosition
+
+  },
+
+  mouseLeave(event){
+    console.log('BSCARDEDITOR mouseLeave...' );
+  },
+
+  getComponentPosition($el){
+
+    if(!this.get('componentPosition')){
+      let componentElement = $el[0];
+      //We are entering something that's a child of our element
+      if($el.parents('#'+this.get('elementId')).length){
+        //if this element is not the root of the component...
+        if($el.attr('id')!== this.get('elementId')){
+          //skip the next leave event b/c it's NOT actually exiting the component...
+          this.set('ignoreNextLeave', true);
+          //get the root component div so we can get card sizes...
+          componentElement = $el.parents('#'+this.get('elementId'))[0];
+        }
+      }
+      //low-level DOM api for-the-win
+      let card = componentElement.getBoundingClientRect();
+      //console.info('RAW: top: ' + card.top + ' bottom: ' + card.bottom + ' scy: ' + window.scrollY + ' H: ' + (card.bottom - card.top) );
+      //this.set('componentPosition',card);
+      //TODO: Ensure this works in target browsers
+      let cp = {
+        top: card.top + window.scrollY,
+        left: card.left + window.scrollX,
+        bottom: card.bottom + window.scrollY,
+        right: card.right + window.scrollX,
+        width: card.width,
+        height: card.height
+      };
+      this.set('componentPosition', cp);
+      return cp;
+    }else{
+      return this.get('componentPosition');
+    }
+  },
+
   actions: {
     onModelChanged() {
 

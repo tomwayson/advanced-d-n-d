@@ -188,7 +188,10 @@ export default Ember.Component.extend({
 
 
 
-
+  mouseLeave(event){
+    //when the mouse leaves this component, we should hide all splitters and crack
+    this.$('.splitter').css({'display':'none'});
+  },
 
   /**
    * Handle actions, bubbling from the cards in the row
@@ -200,7 +203,93 @@ export default Ember.Component.extend({
       this.set('eventBus.transferData.draggedFromRow', this.get('model'));
     },
     onCardDelete( cardToDelete ) {
+
       this.sendAction('onCardDelete', cardToDelete, this.get('model'));
+
+      // let cards= this.get('model.cards');
+      //
+      // //Scenarios:
+      // //  Row has one card, and we are deleting it
+      // //    - delete the row
+      // if(cards.length === 1){
+      //   this.sendAction('onRowDelete', this.get('model'));
+      // }else{
+      //
+      // //  Row has > 1 card to the right of card we are deleting
+      // //    - expand card to the right to fill void
+      // //
+      // //  Row has > 1 card to the left of card we are deleting
+      // //    - expand card to the left to fill void
+      // //
+      //
+      //   //get the index of the card we are about to delete
+      //   let deletedCardIndex = cards.indexOf( cardToDelete );
+      //   //assume we will expand the first card (left)...
+      //   let expandCardIndex = 1;
+      //   if(deletedCardIndex > 0){
+      //     //we expand the card at index 1
+      //     expandCardIndex = deletedCardIndex - 1;
+      //   }
+      //   //get the card to expan
+      //   let expandCard = cards.objectAt(expandCardIndex);
+      //   //expanded width
+      //   let expandedWidth = cardToDelete.width + expandCard.width;
+      //   Ember.set(expandCard, 'width', expandedWidth);
+      //
+      //
+      //   //remove the card
+      //   this.set('model.cards', this.get('model.cards').without( cardToDelete ));
+
+      }
+
+    },
+    onResizeMove(){
+
+    },
+    onShowCardResize(card, edge, cardPosition){
+      //given a card in this row, it's positional information and a mouseEvent...
+      //decide how to show what sort of splitter
+      let cardCount = this.get('model.cards.length');
+      //if there is just one card in the row, we just return, we we can't resize it
+      if(cardCount === 1){
+        console.info('Rejecting Resize for Only Card');
+        this.set('showResizer', false);
+        return;
+      }
+
+      //get the index of the passed in card so we can determine position and neighbors
+      let cardIdx = this.get('model.cards').indexOf(card);
+
+      console.log('Edge: ' + edge + ' Card Index: ' + cardIdx + ' Card Count: ' + cardCount);
+
+      //if this is the first card, and the requested edge is left, return
+      if(cardIdx === 0 && edge === 'left'){
+        console.info('Rejecting Left Resize for First Card');
+        this.set('showResizer', false);
+        return;
+      }
+      //if this is the last card, and the requested edge  is right, return
+      if(cardIdx === (cardCount - 1) && edge === 'right'){
+        console.info('Rejecting Right Resize for Last Card');
+        this.set('showResizer', false);
+        return;
+      }
+
+      //ok - we need to show something... which means we need positional information
+      let leftPos = cardPosition.left;
+      if(edge === 'right'){
+        leftPos = cardPosition.right;
+      }
+
+      let resizerModel = {
+        "position": {
+          "top":cardPosition.top + 10,
+          "bottom":cardPosition.bottom - 10,
+          "left":leftPos - 9,
+          "height":cardPosition.height - 20
+        }
+      };
+      this.set('resizerModel', resizerModel);
     }
   }
 
