@@ -4,6 +4,47 @@ export default Ember.Component.extend({
   tagName:'section',
   classNames:['layout-section-editor'],
 
+  _removeCard(cardToDelete, row) {
+    let cards= row.cards;
+    //Scenarios:
+    //  Row has one card, and we are deleting it
+    //    - delete the row
+    if(cards.length === 1){
+      this.sendAction('onRowDelete', this.get('model'));
+    }else{
+
+    //  Row has > 1 card to the right of card we are deleting
+    //    - expand card to the right to fill void
+    //
+    //  Row has > 1 card to the left of card we are deleting
+    //    - expand card to the left to fill void
+    //
+
+      //get the index of the card we are about to delete
+      let deletedCardIndex = cards.indexOf( cardToDelete );
+      if (deletedCardIndex === -1) {
+        // card not found, bail out
+        return;
+      }
+      //assume we will expand the first card (left)...
+      let expandCardIndex = 1;
+      if(deletedCardIndex > 0){
+        //we expand the card at index 1
+        expandCardIndex = deletedCardIndex - 1;
+      }
+      //get the card to expan
+      let expandCard = cards.objectAt(expandCardIndex);
+      //expanded width
+      let expandedWidth = cardToDelete.width + expandCard.width;
+      Ember.set(expandCard, 'width', expandedWidth);
+
+
+      //remove the card
+      Ember.set(row, 'cards', cards.without( cardToDelete ));
+
+    }
+  },
+
   /**
    * Choose the container class name basd on the
    * containment property of the section
@@ -48,13 +89,17 @@ export default Ember.Component.extend({
     //can accept an add-row action
     if(td.action === 'add-row'){
       console.info('DROP ON SECTION for ' + td.objectType + ' and  Action: ' + td.action);
-      //create the row object and stuff the card into it the rows
+      // create a row object with a single, full width card
+      let newCard = td.model;
+      // if we're moving a card, need to first
+      // remove it from it's original row
+      if (td.dragType === 'move') {
+        this._removeCard(newCard, td.draggedFromRow);
+        // TODO: clear event bus reference to draggedFromRow?
+      }
+      Ember.set(newCard, 'width', 12);
       let row = {
-        cards:[
-          {
-            "width":12,"component": {"name": "placeholder-card"}
-          }
-        ]
+        cards:[newCard]
       };
       //figure out the position to inject it...
       let pos = 0;
@@ -81,6 +126,9 @@ export default Ember.Component.extend({
       //    - delete the passed in row
         this.set('model.rows', this.get('model.rows').without(row));
       }
+    },
+    onCardDelete(card, row) {
+      this._removeCard(card, row);
     }
   }
 
