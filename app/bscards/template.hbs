@@ -21,7 +21,7 @@
 <div id="dockPanel">
   {{#draggable-object objectType='card' onDragStart=(action 'onCardDragStart' 'placeholder')}}DEBUG CARD{{/draggable-object}}
   {{#draggable-object objectType='card' onDragStart=(action 'onCardDragStart' 'blank')}}BLANK CARD{{/draggable-object}}
-  {{#draggable-object objectType='section'}}SECT{{/draggable-object}}
+  {{#draggable-object objectType='section' onDragStart=(action 'onSectionDragStart')}}SECT{{/draggable-object}}
 </div>
 <div class="crack"></div>
 

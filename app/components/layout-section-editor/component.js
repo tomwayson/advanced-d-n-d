@@ -9,6 +9,36 @@ export default Ember.Component.extend({
   }),
 
   /**
+   * Component Position
+   * ,top,bottom,right,left,height,width of this component
+   * Marked Volatile so it's recomputed when requested
+   */
+  componentPosition: Ember.computed('model', function(){
+    return this.getComponentPosition();
+  }).volatile(),
+
+  /**
+   * Actually get the component position from the DOM
+   * accounting for scroll position
+   */
+  getComponentPosition(){
+    //get the actual Element
+    let componentElement = this.$()[0];
+    //low-level DOM api for-the-win
+    let rect = componentElement.getBoundingClientRect();
+    //create a json object that accounts for scroll position
+    let cp = {
+      top: rect.top + window.scrollY,
+      left: rect.left + window.scrollX,
+      bottom: rect.bottom + window.scrollY,
+      right: rect.right + window.scrollX,
+      width: rect.width,
+      height: rect.height
+    };
+    return cp;
+  },
+
+  /**
    * Centralized Handling of Card Removal
    */
   _removeCard(cardToDelete, row) {
@@ -86,28 +116,100 @@ export default Ember.Component.extend({
   eventBus: Ember.inject.service('event-bus'),
 
   dragEnter(event){
-    // let td = this.get('eventBus.transferData');
-    // console.info('DRAGENTER ON SECTION ' + this.get('elementId') + ' for ' + td.type);
-    // if(td.type === 'add-row'){
-    //   event.preventDefault();
-    // }
+    let td = this.get('eventBus.transferData');
+
+    // only if dragged object is a section or adding a row
+    if(!td || (td.objectType !=='section' && td.action !== 'add-row')) {
+      return;
+    }
+
+    // we'll handle this
     event.preventDefault();
+  },
+  dragLeave(){
+    this.get('eventBus').trigger('hideDropTarget');
   },
   dragOver(event){
-    event.preventDefault();
-    // let td = this.get('eventBus.transferData');
-    // if(td.type === 'add-row'){
-    //   event.preventDefault();
-    // }
+    let td = this.get('eventBus.transferData');
+
+    // only if dragged object is a section or adding a row
+    if(!td) {
+      return;
+    }
+
+    if (td.objectType === 'section') {
+      // we'll handle this
+      event.preventDefault();
+
+      // user is dragging sections
+      //get the x,y from the event
+      let mousePos = {
+        x: event.originalEvent.clientX + window.scrollX,
+        y: event.originalEvent.clientY + window.scrollY
+      };
+
+      //get the card rectangle
+      let componentPosition = this.get('componentPosition');
+      let proximity = componentPosition.height / 4;
+      let insertAfter = false;
+      let transferAction = td.action;
+      let dropTargetModel = null;
+
+      //Close to the top
+      if(mousePos.y > componentPosition.top && mousePos.y < (componentPosition.top + proximity) ){
+
+        dropTargetModel = {
+          "top":componentPosition.top - 10,
+          "left":componentPosition.left + 10,
+          "height":4,
+          "width":componentPosition.width - 20
+        };
+        insertAfter = false;
+        console.log('PAGE-LAYOUT-EDITOR: Add section ABOVE with card' );
+        transferAction = td.dragType + '-section';
+      }
+
+      //Close to the bottom
+      if(mousePos.y > (componentPosition.bottom - proximity) && mousePos.y < (componentPosition.bottom) ){
+
+        dropTargetModel = {
+          "top":componentPosition.bottom + 6,
+          "left":componentPosition.left + 10,
+          "height":4,
+          "width":componentPosition.width - 20
+        };
+        insertAfter = true;
+        console.log('PAGE-LAYOUT-EDITOR: Add section BELOW with card' );
+        transferAction = td.dragType + '-section';
+      }
+
+      if(dropTargetModel){
+        this.get('eventBus').trigger('showDropTarget', dropTargetModel);
+      }
+      this.set('eventBus.transferData.action', transferAction);
+      this.set('eventBus.transferData.dropSectionInfo', {
+        section: this.get('model'),
+        insertAfter:insertAfter
+      });
+
+    } else {
+      if (!this.get('hasRows')) {
+        // dragging over section w/o rows, we'll handle this
+        event.preventDefault();
+        // want to add row if dropped here
+        this.set('eventBus.transferData.action', 'add-row');
+      }
+    }
   },
-  drop(event){
+  drop(/*event*/){
     let td = this.get('eventBus.transferData');
     if(!td){
       return;
     }
+    console.info('DROP ON SECTION for ' + td.objectType + ' and  Action: ' + td.action);
+
     //can accept an add-row action
     if(td.action === 'add-row'){
-      console.info('DROP ON SECTION for ' + td.objectType + ' and  Action: ' + td.action);
       // create a row object with a single, full width card
       let newCard = td.model;
       // if we're moving a card, need to first
@@ -122,7 +224,7 @@ export default Ember.Component.extend({
       };
       //figure out the position to inject it...
       let pos = 0;
-      if(td.dropRowInfo.row){
+      if(td.dropRowInfo && td.dropRowInfo.row){
         pos = this.get('model.rows').indexOf(td.dropRowInfo.row) + (td.dropRowInfo.insertAfter ? 1:0);
       }
       this.get('model.rows').insertAt(pos, row);
