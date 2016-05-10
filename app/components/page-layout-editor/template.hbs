@@ -1,7 +1,9 @@
 
 {{#if hasSections}}
   {{#each model.sections as |section|}}
-    {{layout-section-editor model=section}}
+    {{layout-section-editor model=section
+                  onDeleteSection=(action 'onDeleteSection')
+                }}
   {{/each}}
 {{else}}
   <div class="container">

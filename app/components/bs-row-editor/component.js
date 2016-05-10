@@ -222,7 +222,7 @@ export default Ember.Component.extend({
       this.set('eventBus.transferData.draggedFromRow', this.get('model'));
     },
     onCardDelete( cardToDelete ) {
-
+      
       this.sendAction('onCardDelete', cardToDelete, this.get('model'));
 
       // let cards= this.get('model.cards');
@@ -276,7 +276,7 @@ export default Ember.Component.extend({
       let cardCount = this.get('model.cards.length');
       //if there is just one card in the row, we just return, we we can't resize it
       if(cardCount === 1){
-        console.info('Rejecting Resize for Only Card');
+        //console.info('Rejecting Resize for Only Card');
         this.set('showResizer', false);
         return;
       }
@@ -284,16 +284,16 @@ export default Ember.Component.extend({
       //get the index of the passed in card so we can determine position and neighbors
       let cardIdx = this.get('model.cards').indexOf(card);
 
-      console.log('Edge: ' + edge + ' Card Index: ' + cardIdx + ' Card Count: ' + cardCount);
+      //console.log('Edge: ' + edge + ' Card Index: ' + cardIdx + ' Card Count: ' + cardCount);
 
       //if this is the first card, and the requested edge is left, return
       if(cardIdx === 0 && edge === 'left'){
-        console.info('Rejecting Left Resize for First Card');
+        //console.info('Rejecting Left Resize for First Card');
         return;
       }
       //if this is the last card, and the requested edge  is right, return
       if(cardIdx === (cardCount - 1) && edge === 'right'){
-        console.info('Rejecting Right Resize for Last Card');
+        //console.info('Rejecting Right Resize for Last Card');
         return;
       }
 

@@ -70,9 +70,12 @@ export default Ember.Component.extend({
     if(td){
       console.info('DROP ON PAGE-LAYOUT-EDITOR ' + this.get('elementId') + ' for ' + td.objectType);
     }
-
-
   },
+
+  _removeSection(section){
+    this.set('model.sections', this.get('model.sections').without(section));
+  },
+
 
   actions: {
     onRowDrop(e, row) {
@@ -81,7 +84,11 @@ export default Ember.Component.extend({
     },
     onStartMove(e, row) {
       this.set('moveRow', row);
+    },
+    onDeleteSection(section){
+      this._removeSection(section);
     }
+
     // onRowDragEnter(row) {
     //   this.set('dragOverRow', row);
     //   // console.log('entered row', row.message);
