@@ -70,6 +70,11 @@ export default Ember.Component.extend({
   dragOver(event){
     let td = this.get('eventBus.transferData');
 
+    // only if dragged object is a card
+    if (!td || td.objectType !== 'card') {
+      return;
+    }
+
     //get the x,y from the event
     let mousePos = {
       x: event.originalEvent.clientX + window.scrollX,
