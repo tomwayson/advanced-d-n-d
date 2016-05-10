@@ -17,6 +17,9 @@ export default Ember.Component.extend({
     const objectType = this.get('objectType');
     const dragImage = this.get('dragImage');
 
+    // TODO: send an onBeforeDragStart action
+    // so callers can modify transferData before dragging?
+
     console.log('DRAGGABLE-OBJECT Start for  ' + objectType);
     // set the drag properties on the event bus
     this.set('eventBus.transferData', {

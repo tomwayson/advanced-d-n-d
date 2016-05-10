@@ -19,7 +19,7 @@
 </div>
 
 <div id="dockPanel">
-  {{#draggable-object objectType='card' model=placeholderCardDefaults}}CARD{{/draggable-object}}
+  {{#draggable-object objectType='card' onDragStart=(action 'onCardDragStart' 'placeholder')}}CARD{{/draggable-object}}
   {{#draggable-object objectType='section'}}SECT{{/draggable-object}}
 </div>
 <div class="crack"></div>
