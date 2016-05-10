@@ -17,13 +17,18 @@ export default Ember.Controller.extend({
           settings: {
             id: this.get('_lastPlaceHolderCardId')
           }
-        },
-        height: 4,
+        }
       };
-      // TODO: handle other card types
-      } else {
-      // TODO: what to do here
-      return null;
+    // TODO: handle other card types
+    } else if (cardType = 'blank') {
+      return {
+        component: {
+          name: 'blank-card'
+        }
+      };
+    } else {
+    // TODO: what to do here
+    return null;
     }
   },
 
