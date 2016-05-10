@@ -9,7 +9,9 @@ export default Ember.Component.extend({
     let styleString = Ember.String.htmlSafe('');
     let pos = this.get('model.position');
     if(pos){
-      styleString = Ember.String.htmlSafe('top:' + pos.top + 'px; height:' + pos.height + 'px;left:' + pos.left + 'px;');
+      let ht = pos.height - 100;
+      let tp = pos.top + 50;
+      styleString = Ember.String.htmlSafe('top:' + tp + 'px; height:' + ht + 'px;left:' + pos.left + 'px;');
     }
     return styleString;
   }),
@@ -17,48 +19,27 @@ export default Ember.Component.extend({
   isVisible: Ember.computed('model.visible', function(){
     return this.get('model.visible');
   }),
-  // DRAG OF RESIZER
-  //
-  // This is problematic as other event handlers are interfering
-  //
-  // state: {
-  //   isDragging: false
-  // },
-  // mouseDown(event){
-  //   console.log('Resizer Mouse Down X:' + event.clientX);
-  //   this.state.isDragging = true;
-  // },
-  // mouseUp(event){
-  //   console.log('Resizer Mouse Up X:' + event.clientX);
-  //   this.state.isDragging = false;
-  // },
-  // mouseMove(event){
-  //   if(this.state.isDragging){
-  //     console.log('Dragging Resizer: X:' + event.clientX);
-  //     this.set('model.position.left', event.clientX - 10);
-  //     this.$().css({'left': event.clientX - 10});
-  //   }else{
-  //     //console.log('Resizer mousemove');
-  //   }
-  // },
-  // mouseLeave(event){
-  //   console.log('resizer mouseLeave');
-  //   if(this.state.isDragging){
-  //     this.state.isDragging = false;
-  //   }
-  //
-  // },
+
+  controlContainerStyle: Ember.computed('model.position', function(){
+    let styleString = Ember.String.htmlSafe('');
+    let pos = this.get('model.position');
+    if(pos){
+      let tp = ((pos.height - 100) / 2) - 10;
+      styleString = Ember.String.htmlSafe('top:' + tp + 'px;');
+    }
+    return styleString;
+  }),
 
   actions: {
     shiftRight(){
-      console.log('Shift Splitter to the right...');
-      this.sendAction('onShift', this.get('model.cardIndex'), this.get('model.edge'),"right");
       this.set('model.visible', false);
+      this.sendAction('onShift', this.get('model.cardIndex'), this.get('model.edge'),"right");
+
     },
     shiftLeft(){
-      console.log('Shift Splitter to the left...');
-      this.sendAction('onShift', this.get('model.cardIndex'), this.get('model.edge'),'left');
       this.set('model.visible', false);
+      this.sendAction('onShift', this.get('model.cardIndex'), this.get('model.edge'),'left');
+
     }
 
   }
