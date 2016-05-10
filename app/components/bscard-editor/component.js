@@ -183,23 +183,31 @@ export default Ember.Component.extend({
       y: event.clientY + window.scrollY
     };
     let componentPosition = this.get('componentPosition');
-    let resizerProximity = 10;
-    let canResize = false;
+    let resizerProximity = 30;
+    let resizerVisible = false;
+    let edge = '';
     //check if we are close to a resizable edge
     if(mousePos.x > componentPosition.left && mousePos.x < (componentPosition.left + resizerProximity)){
       //send event info up to the bs-row-editor which actually handles showing the resizer
       this.sendAction('onShowCardResize', this.get('model'), 'left', componentPosition);
-      //
-      canResize = true;
+      edge = 'left';
+      resizerVisible = true;
     }
 
     if(mousePos.x < componentPosition.right && mousePos.x > (componentPosition.right - resizerProximity)){
       //send event info up
       this.sendAction('onShowCardResize', this.get('model'), 'right', componentPosition);
-      canResize = true;
+      edge = 'right';
+      resizerVisible = true;
     }
+    //console.log('BS-CARD-EDITOR:mouseMove canResize: ' + resizerVisible);
 
-    this.set('canResize', canResize);
+    this.sendAction('onUpdateCardResizer', {
+      card: this.get('model'),
+      visible: resizerVisible,
+      edge: edge,
+      cardPosition: componentPosition
+    });
 
   },
 
