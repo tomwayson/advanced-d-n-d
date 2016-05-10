@@ -25,27 +25,25 @@ export default Ember.Component.extend({
 
   ignoreNextLeave:false,
 
-  // didInsertElement() {
-  //   this._super(...arguments);
-  //
-  // },
-
   dragStart(event){
-    //-----------------
-    //NOTE: Setting props in didInsertElement throws warnings...
-    //-----------------
+    const $el = this.$();
+    const $target = this.$(event.target);
+
+    // only if started by the drag handle
+    if (!$target.hasClass('draggable')) {
+      return;
+    }
+
     // b/c we're dragging from upper right corner,
     // want to shift to the left by width of the element
     // TODO: probably want to set drag image offset x/y dynamically
     // to account for mouse position over handle
-    // const $el = this.$();
-    // this.set('dragImage', $el[0]);
-    // this.set('dragImageOffsetX', $el.outerWidth());
-    const $el = this.$();
-    event.dataTransfer.setDragImage($el[0], $el.outerWidth(), 0);
+    if (event.dataTransfer && event.dataTransfer.setDragImage) {
+      event.dataTransfer.setDragImage($el[0], $el.outerWidth(), 0);
+    }
 
-    // this.set('dragImage', $el[0]);
-    // this.set('dragImageOffsetX', $el.outerWidth());
+    // let parent row know that a card has started dragging
+    // incase the card is dragged out of that row
     this.sendAction('onCardDrag');
   },
 
