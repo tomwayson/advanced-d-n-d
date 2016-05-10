@@ -144,7 +144,7 @@ export default Ember.Component.extend({
       newCard = Object.assign({},td.model);
     }
 
-    
+
     let targetCard, insertAfter;
     let dropCardInfo = eventBus.get('dropCardInfo');
     if (dropCardInfo) {
@@ -333,49 +333,12 @@ export default Ember.Component.extend({
       this.set('eventBus.transferData.draggedFromRow', this.get('model'));
     },
     onCardDelete( cardToDelete ) {
-
       this.sendAction('onCardDelete', cardToDelete, this.get('model'));
-
-      // let cards= this.get('model.cards');
-      //
-      // //Scenarios:
-      // //  Row has one card, and we are deleting it
-      // //    - delete the row
-      // if(cards.length === 1){
-      //   this.sendAction('onRowDelete', this.get('model'));
-      // }else{
-      //
-      // //  Row has > 1 card to the right of card we are deleting
-      // //    - expand card to the right to fill void
-      // //
-      // //  Row has > 1 card to the left of card we are deleting
-      // //    - expand card to the left to fill void
-      // //
-      //
-      //   //get the index of the card we are about to delete
-      //   let deletedCardIndex = cards.indexOf( cardToDelete );
-      //   //assume we will expand the first card (left)...
-      //   let expandCardIndex = 1;
-      //   if(deletedCardIndex > 0){
-      //     //we expand the card at index 1
-      //     expandCardIndex = deletedCardIndex - 1;
-      //   }
-      //   //get the card to expan
-      //   let expandCard = cards.objectAt(expandCardIndex);
-      //   //expanded width
-      //   let expandedWidth = cardToDelete.width + expandCard.width;
-      //   Ember.set(expandCard, 'width', expandedWidth);
-      //
-      //
-      //   //remove the card
-      //   this.set('model.cards', this.get('model.cards').without( cardToDelete ));
-
     },
     onUpdateCardResizer(options){
       this._updateCardResizer(options);
 
     },
-
 
     /**
      * shift a shared edge
