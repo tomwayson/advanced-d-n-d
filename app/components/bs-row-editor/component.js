@@ -316,7 +316,7 @@ export default Ember.Component.extend({
      * shift a shared edge
      */
     onShiftSharedEdge(cardIndex, edge, direction){
-      console.log('BSROWEDITOR onShift ' + cardIndex + ' ' + edge);
+      //console.log('BSROWEDITOR onShift ' + cardIndex + ' ' + edge);
       let rightCard;
       let  leftCard;
       if(edge==="right"){
