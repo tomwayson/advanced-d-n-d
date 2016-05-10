@@ -8,9 +8,9 @@ const Router = Ember.Router.extend({
 Router.map(function() {
   this.route('copy');
   this.route('rows');
-  this.route('cards');
   this.route('bscards');
-
+  this.route('page');
+  this.route('empty');
 });
 
 export default Router;

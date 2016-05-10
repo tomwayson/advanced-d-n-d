@@ -8,6 +8,14 @@ export default Ember.Component.extend({
     return ( containment === 'fixed') ? 'container' : 'container-fluid';
   }),
   /**
+   * The Style will actually be computed from a hash
+   * but this is a short-cut to focus on other things
+   */
+  attributeBindings: ['style'],
+  style: Ember.computed('model.style', function(){
+    return Ember.String.htmlSafe(this.get('model.style'));
+  }),
+  /**
    * Get the event bus
    */
   eventBus: Ember.inject.service('event-bus'),

@@ -25,15 +25,28 @@ export default Ember.Component.extend({
 
   ignoreNextLeave:false,
 
-  didInsertElement() {
-    this._super(...arguments);
+  // didInsertElement() {
+  //   this._super(...arguments);
+  //
+  // },
+
+  dragStart(event){
+    //-----------------
+    //NOTE: Setting props in didInsertElement throws warnings...
+    //-----------------
     // b/c we're dragging from upper right corner,
     // want to shift to the left by width of the element
     // TODO: probably want to set drag image offset x/y dynamically
     // to account for mouse position over handle
+    // const $el = this.$();
+    // this.set('dragImage', $el[0]);
+    // this.set('dragImageOffsetX', $el.outerWidth());
     const $el = this.$();
-    this.set('dragImage', $el[0]);
-    this.set('dragImageOffsetX', $el.outerWidth());
+    event.dataTransfer.setDragImage($el[0], $el.outerWidth(), 0);
+
+    // this.set('dragImage', $el[0]);
+    // this.set('dragImageOffsetX', $el.outerWidth());
+    this.sendAction('onCardDrag');
   },
 
 
@@ -47,6 +60,7 @@ export default Ember.Component.extend({
    */
   drop(event){
     Ember.$('.crack').css({display:"none"});
+    this.get('eventBus').trigger('hideDropTarget');
   },
 
   /**
@@ -65,19 +79,14 @@ export default Ember.Component.extend({
     //get the card rectangle
     let card = this.get('componentPosition');
 
-    //console.info('Card: top: ' + card.top + ' cY: ' + mousePos.y + ' bottom: ' + card.bottom + ' left: ' + card.left + ' cX: ' + mousePos.x +' Right: ' + card.right);
-
     //when you are within 1/4 of the dimension
-    let xProximity = card.width / 3;
-    let yProximity = card.height / 3;
+    let xProximity = 30;
+    let yProximity = 30;
     let inset = 10;
-    //default crack css
-    let crackcss = {
-      display:"none"
-    };
+
     // insert before or after this card? default to after
     let insertAfter = false;
-
+    let dropTargetModel = null;
     /**
      * Determine if we are close to an edge...
      */
@@ -86,13 +95,11 @@ export default Ember.Component.extend({
       //Close to the left
       if(mousePos.x > card.left && mousePos.x < (card.left + xProximity) ){
 
-        crackcss = {
-          "display":"block",
-          "background-color":"#666666",
+        dropTargetModel = {
           "top":card.top + inset,
           "left":card.left + inset,
           "height":card.height - (2 * inset),
-          "width":"4px"
+          "width":"4"
         };
         insertAfter = false;
       }
@@ -100,13 +107,11 @@ export default Ember.Component.extend({
       //Close to the right
       if(mousePos.x > ( card.right - xProximity)  && mousePos.x < card.right )  {
 
-        crackcss = {
-          "display":"block",
-          "background-color":"#666666",
+        dropTargetModel = {
           "top":card.top + inset,
           "left":card.right - inset,
           "height":card.height - (2 * inset),
-          "width":"4px"
+          "width":4
         };
         insertAfter = true;
       }
@@ -139,8 +144,10 @@ export default Ember.Component.extend({
     //   };
     //   insertAfter = true;
     // }
-    //set the crack css
-    Ember.$('.crack').css(crackcss);
+
+    if(dropTargetModel){
+      this.get('eventBus').trigger('showDropTarget', dropTargetModel);
+    }
     // set target card and before/after
     // TODO: change to .transferData.
     this.set('eventBus.dropCardInfo', {
@@ -156,7 +163,8 @@ export default Ember.Component.extend({
    */
   dragLeave(event){
     if(!this.get('ignoreNextLeave')) {
-      Ember.$('.crack').css({display:"none"});
+      //Ember.$('.crack').css({display:"none"});
+      this.get('eventBus').trigger('hideDropTarget');
     }else{
       this.set('ignoreNextLeave', false);
     }
@@ -225,9 +233,7 @@ export default Ember.Component.extend({
     onModelChanged() {
 
     },
-    onDragStart() {
-      this.sendAction('onCardDrag');
-    },
+
     deleteCard(){
       Ember.debug('bscard-editor:deleteCard...');
       this.sendAction('onCardDelete', this.get('model'));

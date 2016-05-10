@@ -4,9 +4,9 @@
                   onShowCardResize=(action 'onShowCardResize')
                   onCardDelete=(action 'onCardDelete')}}
 {{/each}}
-<div class="row-crack"></div>
+
 {{#if showResizer}}
   {{card-resizer model=resizerModel
-                 onShift=(action 'onShift')
+                 onShift=(action 'onShiftSharedEdge')
                }}
 {{/if}}

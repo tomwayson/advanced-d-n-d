@@ -3,9 +3,9 @@ $link-color: #555555;
 
 @import 'layout-section-editor';
 @import 'bs-row-editor';
-@import 'layout-cards-editor';
 @import 'bs-cards-editor';
 @import 'dock-panel';
+@import 'drop-target';
 // TODO: replace w/ 1 per component, or remove?
 @import 'tom';
 

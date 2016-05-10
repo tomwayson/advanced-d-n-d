@@ -85,7 +85,9 @@ export default Ember.Component.extend({
   },
   drop(event){
     let td = this.get('eventBus.transferData');
-
+    if(!td){
+      return;
+    }
     //can accept an add-row action
     if(td.action === 'add-row'){
       console.info('DROP ON SECTION for ' + td.objectType + ' and  Action: ' + td.action);

@@ -4,44 +4,7 @@ export default Ember.Component.extend({
   classNames:['row', 'bs-row-editor'],
   eventBus: Ember.inject.service(),
   resizerModel: {},
-  // didInsertElement: function(){
-  //   //setup drag handlers for the splitter
-  //   //we do this as raw dom b/c it side-steps
-  //   //the ember render loop which is needed to
-  //   //get the perf we need
-  //
-  //   this.$('.splitter').on('mousedown', this.splitterMouseDown);
-  //   this.$('.splitter').on('mouseup', this.splitterMouseUp);
-  //   this.$('.splitter').on('mousemove', this.splitterMouseMove);
-  //
-  // },
-  // willDestroyElement() {
-  //   this._super(...arguments);
-  //   //remove handlers...
-  //   this.$('.splitter').off('mousedown');
-  //   this.$('.splitter').off('mouseup');
-  //   this.$('.splitter').off('mousemove');
-  // },
-  // splitterState: {
-  //   visible: false,
-  //   isDragging: false,
-  //   canResize: false
-  // },
-  // splitterMouseDown(event){
-  //   console.log('Splitter Mouse Down');
-  //   //this.splitterState.isDragging = true;
-  // },
-  // splitterMouseUp(event){
-  //   console.log('Splitter Mouse Up');
-  //   //this.splitterState.isDragging = false;
-  // },
-  // splitterMouseMove(event){
-  //   if(this.splitterState.isDragging){
-  //     console.log('Dragging Splitter...');
-  //   }else{
-  //     console.log('Splitter mousemove');
-  //   }
-  // },
+
 
   // insert a card either at the begining
   // or before/after the target card
@@ -63,38 +26,36 @@ export default Ember.Component.extend({
   dragEnter(event){
     let td = this.get('eventBus.transferData');
 
-
     //preventDefault for valid objects of correct type
     if(td.objectType === 'card'){
       //console.info('DRAGENTER ON ROW ' + this.get('elementId') + ' for ' + td.objectType);
       event.preventDefault();
     }
-    //getComponentElement
-    let $el = Ember.$(event.target);
-    let componentElement = $el[0];
-    //We are entering something that's a child of our element
-    if($el.parents('#'+this.get('elementId')).length){
-      //if this element is not the root of the component...
-      if($el.attr('id')!== this.get('elementId')){
-        //skip the next leave event b/c it's NOT actually exiting the component...
-        this.set('ignoreNextLeave', true);
-        //get the root component div so we can get card sizes...
-        componentElement = $el.parents('#'+this.get('elementId'))[0];
-      }
-    }
-    let componentPosition = componentElement.getBoundingClientRect();
-
-    let cp = {
-      top: componentPosition.top + window.scrollY,
-      left: componentPosition.left + window.scrollX,
-      bottom: componentPosition.bottom + window.scrollY,
-      rigth: componentPosition.right + window.scrollX,
-      width: componentPosition.width,
-      height: componentPosition.height
-    };
-
-
-    this.set('componentPosition',cp);
+    // //getComponentElement
+    // let $el = Ember.$(event.target);
+    // let componentElement = $el[0];
+    // //We are entering something that's a child of our element
+    // if($el.parents('#'+this.get('elementId')).length){
+    //   //if this element is not the root of the component...
+    //   if($el.attr('id')!== this.get('elementId')){
+    //     //skip the next leave event b/c it's NOT actually exiting the component...
+    //     this.set('ignoreNextLeave', true);
+    //     //get the root component div so we can get card sizes...
+    //     componentElement = $el.parents('#'+this.get('elementId'))[0];
+    //   }
+    // }
+    // let componentPosition = componentElement.getBoundingClientRect();
+    //
+    // let cp = {
+    //   top: componentPosition.top + window.scrollY,
+    //   left: componentPosition.left + window.scrollX,
+    //   bottom: componentPosition.bottom + window.scrollY,
+    //   rigth: componentPosition.right + window.scrollX,
+    //   width: componentPosition.width,
+    //   height: componentPosition.height
+    // };
+    //
+    // this.set('componentPosition',cp);
 
   },
 
@@ -110,25 +71,22 @@ export default Ember.Component.extend({
       x: event.originalEvent.clientX + window.scrollX,
       y: event.originalEvent.clientY + window.scrollY
     };
-    let crackcss = {
-      display:"none"
-    };
+
     //get the card rectangle
     let componentPosition = this.get('componentPosition');
     let proximity = componentPosition.height / 4;
     let insertAfter = false;
     let transferAction = td.action;
+    let dropTargetModel = null;
 
     if(mousePos.y > componentPosition.top && mousePos.y < (componentPosition.top + proximity) ){
 
-      crackcss = {
-        "display":"block",
-        "background-color":"grey",
+      dropTargetModel = {
         "top":componentPosition.top - 10,
         "left":componentPosition.left + 10,
-        "height":"8px",
+        "height":4,
         "width":componentPosition.width - 20
-      };
+      }
       insertAfter = false;
       console.log('BS-ROW-EDITOR: Add row ABOVE with card' );
       transferAction= 'add-row';
@@ -137,12 +95,10 @@ export default Ember.Component.extend({
     //Close to the bottom
     if(mousePos.y > (componentPosition.bottom - proximity) && mousePos.y < (componentPosition.bottom) ){
 
-      crackcss = {
-        "display":"block",
-        "background-color":"grey",
-        "top":componentPosition.bottom + 10,
+      dropTargetModel = {
+        "top":componentPosition.bottom + 6,
         "left":componentPosition.left + 10,
-        "height":"8px",
+        "height":4,
         "width":componentPosition.width - 20
       };
       insertAfter = true;
@@ -150,10 +106,10 @@ export default Ember.Component.extend({
       transferAction= 'add-row';
     }
 
+    if(dropTargetModel){
+      this.get('eventBus').trigger('showDropTarget', dropTargetModel);
+    }
     this.set('eventBus.transferData.action', transferAction);
-    //set the crack css
-    this.$('.row-crack').css(crackcss);
-
     this.set('eventBus.transferData.dropRowInfo', {
       row: this.get('model'),
       insertAfter:insertAfter
@@ -164,8 +120,11 @@ export default Ember.Component.extend({
 
   drop(event){
     //set the crack css
-    this.$('.row-crack').css({"display":"none"});
+    //this.$('.row-crack').css({"display":"none"});
+    this.get('eventBus').trigger('hideDropTarget');
+
     let eventBus = this.get('eventBus');
+    //get the transferData from the eventBus
     let td = this.get('eventBus.transferData');
     // row handler only supports adding/moving cards
     if(td.action !== 'add-card' && td.action !== 'move-card'){
@@ -188,8 +147,7 @@ export default Ember.Component.extend({
           // TODO: return?
         }else{
           //ok we can split
-          // if we're moving a card, need to first
-          // remove it from it's original row
+          // if we're moving a card, remove it from it's original row
           if (td.dragType === 'move') {
             this.sendAction('onCardDelete', newCard, td.draggedFromRow);
           }
@@ -204,32 +162,55 @@ export default Ember.Component.extend({
         }
         // TODO: clear event bus drag state?
         // here, or below where the drop state is cleared?
+
       }
     }else{
       console.error('Card can not be dropped at this location.');
     }
 
-    // else{
-    //   //we are inserting into a new row...
-    //   // TODO: what size should it be?
-    //     newCard = {
-    //       "width":4,
-    //       "height": 4,
-    //       "component": {"name": "placeholder-card"}
-    //     };
-    //     // insert the card
-    //     this._insertCard(newCard, targetCard, insertAfter);
-    // }
-
-    // clear event bus drop state
-    eventBus.set('dropCardInfo', null);
+    // clear event bus transferData
+    this.set('eventBus.transferData', null);
   },
 
-
+  dragLeave(){
+    this.get('eventBus').trigger('hideDropTarget');
+  },
   mouseLeave(event){
     //when the mouse leaves this component, we should hide all resizers and crack
     this.set('showResizer', false);
+    //this.get('eventBus').trigger('hideDropTarget');
   },
+
+  /**
+   * Component Position
+   * ,top,bottom,right,left,height,width of this component
+   * Marked Volatile so it's recomputed when requested
+   */
+  componentPosition: Ember.computed('model', function(){
+    return this.getComponentPosition();
+  }).volatile(),
+
+  /**
+   * Actually get the component position from the DOM
+   * accounting for scroll position
+   */
+  getComponentPosition(){
+    //get the actual Element
+    let componentElement = this.$()[0];
+    //low-level DOM api for-the-win
+    let card = componentElement.getBoundingClientRect();
+    //create a json object that accounts for scroll position
+    let cp = {
+      top: card.top + window.scrollY,
+      left: card.left + window.scrollX,
+      bottom: card.bottom + window.scrollY,
+      right: card.right + window.scrollX,
+      width: card.width,
+      height: card.height
+    };
+    return cp;
+  },
+
 
   /**
    * Handle actions, bubbling from the cards in the row
@@ -277,8 +258,6 @@ export default Ember.Component.extend({
       //
       //   //remove the card
       //   this.set('model.cards', this.get('model.cards').without( cardToDelete ));
-
-    
 
     },
     onShowCardResize(card, edge, cardPosition){
@@ -367,7 +346,10 @@ export default Ember.Component.extend({
 
     },
 
-    onShift(cardIndex, edge, direction){
+    /**
+     * shift a shared edge
+     */
+    onShiftSharedEdge(cardIndex, edge, direction){
       console.log('BSROWEDITOR onShift ' + cardIndex + ' ' + edge);
       let rightCard;
       let  leftCard;
