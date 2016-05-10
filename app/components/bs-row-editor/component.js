@@ -26,11 +26,15 @@ export default Ember.Component.extend({
   dragEnter(event){
     let td = this.get('eventBus.transferData');
 
-    //preventDefault for valid objects of correct type
-    if(td.objectType === 'card'){
-      //console.info('DRAGENTER ON ROW ' + this.get('elementId') + ' for ' + td.objectType);
-      event.preventDefault();
+    // only if dragged object is a card
+    if(!td || td.objectType !== 'card') {
+      return;
     }
+
+    //console.info('DRAGENTER ON ROW ' + this.get('elementId') + ' for ' + td.objectType);
+    //preventDefault for valid objects of correct type
+    event.preventDefault();
+
     // //getComponentElement
     // let $el = Ember.$(event.target);
     // let componentElement = $el[0];
@@ -61,8 +65,9 @@ export default Ember.Component.extend({
 
   dragOver(event){
     let td = this.get('eventBus.transferData');
-    if(td.objectType !== 'card'){
-      console.log('DRAGOVER ON ROW for ' + td.objectType + ' rejected.' );
+
+    // only if dragged object is a card
+    if(!td || td.objectType !== 'card'){
       return;
     }
     event.preventDefault();
@@ -127,8 +132,7 @@ export default Ember.Component.extend({
     //get the transferData from the eventBus
     let td = this.get('eventBus.transferData');
     // row handler only supports adding/moving cards
-    if(td.action !== 'add-card' && td.action !== 'move-card'){
-      console.log('BS-ROW-EDITOR: skipping DROP for ' + this.get('elementId') + ' caught drop for type ' + td.objectType + ' Action: ' + td.action);
+    if(!td || (td.action !== 'add-card' && td.action !== 'move-card')) {
       return;
     }
     console.log('BS-ROW-EDITOR: Processing DROP for ' + this.get('elementId') + ' caught drop for type ' + td.objectType + ' Action: ' + td.action);
@@ -144,7 +148,6 @@ export default Ember.Component.extend({
         if(targetCard.minWidth && targetCard.width === targetCard.minWidth){
           //we can't split this either
           console.error('Card can not be dropped at this location.');
-          // TODO: return?
         }else{
           //ok we can split
           // if we're moving a card, remove it from it's original row
@@ -160,15 +163,14 @@ export default Ember.Component.extend({
           // insert the card
           this._insertCard(newCard, targetCard, insertAfter);
         }
-        // TODO: clear event bus drag state?
-        // here, or below where the drop state is cleared?
-
       }
+      // clear event bus drop info
+      this.set('eventBus.dropCardInfo', null);
     }else{
       console.error('Card can not be dropped at this location.');
     }
 
-    // clear event bus transferData
+    // clear event bus drag info
     this.set('eventBus.transferData', null);
   },
 
@@ -222,7 +224,7 @@ export default Ember.Component.extend({
       this.set('eventBus.transferData.draggedFromRow', this.get('model'));
     },
     onCardDelete( cardToDelete ) {
-      
+
       this.sendAction('onCardDelete', cardToDelete, this.get('model'));
 
       // let cards= this.get('model.cards');

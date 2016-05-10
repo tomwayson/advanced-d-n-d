@@ -49,20 +49,25 @@ export default Ember.Component.extend({
   dragEnter(event){
     let td = this.get('eventBus.transferData');
 
-    if(td.objectType==='section'){
-      console.info('PAGE-LAYOUT-EDITOR VALID DROP TARGET FOR ' + td.objectType);
-      event.preventDefault()
+    // only if dragged object is a section
+    if(!td || td.objectType !=='section') {
+      return;
     }
+    console.info('PAGE-LAYOUT-EDITOR VALID DROP TARGET FOR ' + td.objectType);
+    event.preventDefault();
+
+    // TODO: what to do w/ dragged section
   },
 
   dragOver(event){
     //can accept a section
     let td = this.get('eventBus.transferData');
 
-    if(td.objectType==='section'){
-      console.info('PAGE-LAYOUT-EDITOR VALID DROP TARGET FOR ' + td.objectType);
-      event.preventDefault()
+    // only if dragged object is a section
+    if(!td || td.objectType !=='section') {
+      return;
     }
+    event.preventDefault();
   },
 
   drop(event){
