@@ -278,7 +278,7 @@ export default Ember.Component.extend({
       //   //remove the card
       //   this.set('model.cards', this.get('model.cards').without( cardToDelete ));
 
-      }
+    
 
     },
     onShowCardResize(card, edge, cardPosition){

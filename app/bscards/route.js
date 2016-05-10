@@ -23,7 +23,7 @@ export default Ember.Route.extend({
         },
         {
           "containment":"fixed",
-          "style":"background-color:#666666; color:white;",
+          "style":"background-color:#FFFFCC; color:666666;",
           "rows":[
             {
               "cards":[
@@ -53,7 +53,7 @@ export default Ember.Route.extend({
         },
         {
           "containment":"fixed",
-          "style":"background-color:#FFFFCC ;color:#666666",
+          "style":"background-color:#666666 ;color:#ffffff",
           "rows":[
             {
               "cards":[
