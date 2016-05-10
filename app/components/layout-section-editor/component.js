@@ -4,13 +4,17 @@ export default Ember.Component.extend({
   tagName:'section',
   classNames:['layout-section-editor'],
 
+  /**
+   * Centralized Handling of Card Removal
+   */
   _removeCard(cardToDelete, row) {
     let cards= row.cards;
     //Scenarios:
     //  Row has one card, and we are deleting it
     //    - delete the row
     if(cards.length === 1){
-      this.sendAction('onRowDelete', this.get('model'));
+      console.log('LAYOUT-SECTION-EDITOR:_removeCard - removing last card in row...');
+      this._removeRow(row);
     }else{
 
     //  Row has > 1 card to the right of card we are deleting
@@ -42,6 +46,24 @@ export default Ember.Component.extend({
       //remove the card
       Ember.set(row, 'cards', cards.without( cardToDelete ));
 
+    }
+  },
+
+  /**
+   * Centralized Handling of Row Removal
+   */
+  _removeRow(row){
+    let rows = this.get('model.rows');
+
+    //Scenarios
+      // Section has one row, and we are deleting it
+      //   - delete the section
+    if( rows.length === 1 ) {
+      this.sendAction('onDeleteSection', this.get('model'));
+    }else{
+      //  Section has > 1 row
+      //    - delete the passed in row
+      this.set('model.rows', this.get('model.rows').without(row));
     }
   },
 
@@ -115,19 +137,7 @@ export default Ember.Component.extend({
 
   actions: {
     onRowDelete( row ){
-      let rows = this.get('model.rows');
-
-      //Scenarios
-      // Section has one row, and we are deleting it
-      //   - delete the section
-      if( rows.length === 1 ) {
-        this.sendAction('onDeleteSection', this.get('model'));
-      }else{
-
-      //  Section has > 1 row
-      //    - delete the passed in row
-        this.set('model.rows', this.get('model.rows').without(row));
-      }
+      this._removeRow(row);
     },
     onCardDelete(card, row) {
       this._removeCard(card, row);
