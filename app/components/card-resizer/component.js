@@ -1,16 +1,21 @@
 import Ember from 'ember';
 
 export default Ember.Component.extend({
-  classNames: ['resizer'],
+  classNames: ['card-resizer'],
+  classNameBindings:['isVisible:visible'],
   attributeBindings:['style'],
 
   style:Ember.computed('model.position', function(){
+    let styleString = Ember.String.htmlSafe('');
     let pos = this.get('model.position');
     if(pos){
-      return Ember.String.htmlSafe('top:' + pos.top + 'px; height:' + pos.height + 'px;left:' + pos.left + 'px;');
-    }else{
-      return Ember.String.htmlSafe('');
+      styleString = Ember.String.htmlSafe('top:' + pos.top + 'px; height:' + pos.height + 'px;left:' + pos.left + 'px;');
     }
+    return styleString;
+  }),
+
+  isVisible: Ember.computed('model.visible', function(){
+    return this.get('model.visible');
   }),
   // DRAG OF RESIZER
   //
@@ -48,10 +53,12 @@ export default Ember.Component.extend({
     shiftRight(){
       console.log('Shift Splitter to the right...');
       this.sendAction('onShift', this.get('model.cardIndex'), this.get('model.edge'),"right");
+      this.set('model.visible', false);
     },
     shiftLeft(){
       console.log('Shift Splitter to the left...');
       this.sendAction('onShift', this.get('model.cardIndex'), this.get('model.edge'),'left');
+      this.set('model.visible', false);
     }
 
   }
