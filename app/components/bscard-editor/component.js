@@ -160,19 +160,7 @@ export default Ember.Component.extend({
     this.set('eventBus.transferData.action', td.dragType + '-card');
   },
 
-  didInsertElement(){
-    this._super(...arguments);
-    this.$().on('transitionend', this._onTransitionEnd.bind(this));
-  },
 
-  willDestroyElement(){
-    this.$().off('transitionend', this._onTransitionEnd);
-  },
-
-  _onTransitionEnd(event){
-    console.log('BSCARDEDITOR onTransitionEnd for property ' + event.originalEvent.propertyName);
-    this.sendAction('onCardCssTransitionEnd', event.originalEvent.propertyName);
-  },
   /**
    * When something leaves the component...
    * - hide the crack

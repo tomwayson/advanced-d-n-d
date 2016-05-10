@@ -141,12 +141,7 @@ export default Ember.Component.extend({
           // set the card width/height based on above calculations
           Ember.set(newCard, 'width', Math.floor(halfWidth));
           // insert the card
-          Ember.run.next( this, function() {
-            // this will be executed in the first RunLoop queue, when bindings are synced
-            console.log('scheduled on sync queue');
-            this._insertCard(newCard, targetCard, insertAfter);
-          });
-
+          this._insertCard(newCard, targetCard, insertAfter);
         }
       }
       // clear event bus drop info
