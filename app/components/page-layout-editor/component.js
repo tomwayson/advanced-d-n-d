@@ -8,7 +8,7 @@ export default Ember.Component.extend({
   hasSections: Ember.computed('model.sections.length', function() {
     return this.get('model.sections.length') > 0;
   }),
-  
+
   dropTargetModel: null,
 
   /**
@@ -35,7 +35,6 @@ export default Ember.Component.extend({
    * only have one active at a time.
    */
   onShowDropTarget(dropTargetModel){
-    console.log('onShowDropTarget ', dropTargetModel);
     this.set('dropTargetModel', dropTargetModel);
     this.$('.drop-target').css({display:'block'});
   },
