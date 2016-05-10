@@ -1,17 +1,13 @@
-
 {{#if hasSections}}
   {{#each model.sections as |section|}}
-    {{layout-section-editor model=section}}
+    {{layout-section model=section}}
   {{/each}}
 {{else}}
   <div class="container">
     <div class="row">
       <div class="col-md-12">
-        <h2>Drag a card a component here</h2>
+        <h2>This is an empty page</h2>
       </div>
     </div>
   </div>
 {{/if}}
-
-
-{{drop-target model=dropTargetModel}}

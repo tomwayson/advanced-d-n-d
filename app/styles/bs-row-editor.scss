@@ -6,3 +6,38 @@
   margin-top:20px;
   margin-bottom:20px;
 }
+
+.resizer {
+  position:absolute;
+  display:block;
+  background-color:cyan;
+  width:18px;
+  border-radius: 5px;
+  .control-container {
+    position:relative;
+    top:70px;
+    width:80px;
+    left:-32px;
+
+  }
+  .resize-right {
+    float:right;
+    background-color:cyan;
+    -webkit-box-shadow: 0px 0px 15px 6px rgba(0,0,0,0.25);
+    -moz-box-shadow: 0px 0px 15px 6px rgba(0,0,0,0.25);
+    box-shadow: 0px 0px 15px 6px rgba(0,0,0,0.25);
+  }
+  .resize-left {
+    float:left;
+    background-color:cyan;
+    -webkit-box-shadow: 0px 0px 15px 6px rgba(0,0,0,0.25);
+    -moz-box-shadow: 0px 0px 15px 6px rgba(0,0,0,0.25);
+    box-shadow: 0px 0px 15px 6px rgba(0,0,0,0.25);
+  }
+}
+
+// .col-md-1,.col-md-2,.col-md-3,.col-md-4,.col-md-5,.col-md-6,
+// .col-md-7,.col-md-8,.col-md-9,.col-md-10,.col-md-11,.col-md-12 {
+//   transition-property: width;
+//   transition-duration: 0.25s;
+// }

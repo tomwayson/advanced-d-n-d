@@ -1,0 +1,12 @@
+<div class="control-container">
+  {{#if model.showLeftSizer}}
+  <button class="resize-left btn btn-xs">
+    <span class="glyphicon glyphicon-arrow-left" {{ action "shiftLeft"}}></span>
+  </button>
+  {{/if}}
+  {{#if model.showRightSizer}}
+  <button class="resize-right btn btn-xs" {{ action "shiftRight"}}>
+    <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span>
+  </button>
+  {{/if}}
+</div>

@@ -9,11 +9,42 @@ export default Ember.Component.extend({
     return this.get('model.sections.length') > 0;
   }),
 
+  dropTargetModel: null,
 
   /**
    * Get the event bus
    */
   eventBus: Ember.inject.service('event-bus'),
+
+  init(){
+    this._super(...arguments);
+    //event handler to listen to eventBus
+    this.get('eventBus').on('showDropTarget', this, 'onShowDropTarget');
+    this.get('eventBus').on('hideDropTarget', this, 'onHideDropTarget');
+  },
+
+  willDestroyElement(){
+    this.get('eventBus').off('showDropTarget', this, 'onShowDropTarget');
+    this.get('eventBus').off('hideDropTarget', this, 'onHideDropTarget');
+  },
+
+  /**
+   * Drop-Target is a shared control across the entire
+   * page-layout. It's used to show the location of a
+   * drop target. By using a shared element, we can
+   * only have one active at a time.
+   */
+  onShowDropTarget(dropTargetModel){
+    this.set('dropTargetModel', dropTargetModel);
+    this.$('.drop-target').css({display:'block'});
+  },
+
+  /**
+   * Simply hide the Drop-Target
+   */
+  onHideDropTarget(){
+    this.$('.drop-target').css({display:'none'});
+  },
 
   dragEnter(event){
     let td = this.get('eventBus.transferData');

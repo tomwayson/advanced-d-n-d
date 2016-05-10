@@ -1,5 +1,12 @@
 {{#each model.cards as |card|}}
   {{bscard-editor model=card
-                  onCardDelete=(action 'onCardDelete') onCardDrag=(action 'onCardDrag') }}
+                  onCardDrag=(action 'onCardDrag')
+                  onShowCardResize=(action 'onShowCardResize')
+                  onCardDelete=(action 'onCardDelete')}}
 {{/each}}
-<div class="row-crack"></div>
+
+{{#if showResizer}}
+  {{card-resizer model=resizerModel
+                 onShift=(action 'onShiftSharedEdge')
+               }}
+{{/if}}
