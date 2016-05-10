@@ -136,7 +136,15 @@ export default Ember.Component.extend({
       return;
     }
     console.log('BS-ROW-EDITOR: Processing DROP for ' + this.get('elementId') + ' caught drop for type ' + td.objectType + ' Action: ' + td.action);
+
+    //default to the card...
     let newCard = td.model;
+    if(td.action ==='add-card'){
+      //but if we are adding it we want a clone
+      newCard = Object.assign({},td.model);
+    }
+
+    
     let targetCard, insertAfter;
     let dropCardInfo = eventBus.get('dropCardInfo');
     if (dropCardInfo) {
