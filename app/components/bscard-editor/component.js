@@ -160,6 +160,7 @@ export default Ember.Component.extend({
     this.set('eventBus.transferData.action', td.dragType + '-card');
   },
 
+
   /**
    * When something leaves the component...
    * - hide the crack

@@ -4,6 +4,9 @@ export default Ember.Component.extend({
   classNames:['row', 'bs-row-editor'],
   eventBus: Ember.inject.service(),
   resizerModel: {},
+  //queue of cards to add... allows us to defer some
+  //changes until after css transitions have happened...
+  cardQueue: [],
 
 
   // insert a card either at the begining
@@ -25,42 +28,11 @@ export default Ember.Component.extend({
 
   dragEnter(event){
     let td = this.get('eventBus.transferData');
-
     // only if dragged object is a card
     if(!td || td.objectType !== 'card') {
       return;
     }
-
-    //console.info('DRAGENTER ON ROW ' + this.get('elementId') + ' for ' + td.objectType);
-    //preventDefault for valid objects of correct type
     event.preventDefault();
-
-    // //getComponentElement
-    // let $el = Ember.$(event.target);
-    // let componentElement = $el[0];
-    // //We are entering something that's a child of our element
-    // if($el.parents('#'+this.get('elementId')).length){
-    //   //if this element is not the root of the component...
-    //   if($el.attr('id')!== this.get('elementId')){
-    //     //skip the next leave event b/c it's NOT actually exiting the component...
-    //     this.set('ignoreNextLeave', true);
-    //     //get the root component div so we can get card sizes...
-    //     componentElement = $el.parents('#'+this.get('elementId'))[0];
-    //   }
-    // }
-    // let componentPosition = componentElement.getBoundingClientRect();
-    //
-    // let cp = {
-    //   top: componentPosition.top + window.scrollY,
-    //   left: componentPosition.left + window.scrollX,
-    //   bottom: componentPosition.bottom + window.scrollY,
-    //   rigth: componentPosition.right + window.scrollX,
-    //   width: componentPosition.width,
-    //   height: componentPosition.height
-    // };
-    //
-    // this.set('componentPosition',cp);
-
   },
 
   dragOver(event){
@@ -91,7 +63,7 @@ export default Ember.Component.extend({
         "left":componentPosition.left + 10,
         "height":4,
         "width":componentPosition.width - 20
-      }
+      };
       insertAfter = false;
       console.log('BS-ROW-EDITOR: Add row ABOVE with card' );
       transferAction= 'add-row';
@@ -139,6 +111,12 @@ export default Ember.Component.extend({
 
     //default to the card...
     let newCard = td.model;
+    if(td.action ==='add-card'){
+      //but if we are adding it we want a clone
+      newCard = Object.assign({},td.model);
+    }
+
+
     let targetCard, insertAfter;
     let dropCardInfo = eventBus.get('dropCardInfo');
     if (dropCardInfo) {
