@@ -36,6 +36,14 @@ export default Ember.Controller.extend({
     onCardDragStart(cardType) {
       const cardModel = this.getCardDefaults(cardType);
       this.get('eventBus').set('transferData.model', cardModel);
+    },
+    onSectionDragStart() {
+      const sectionModel = {
+        containment: 'fixed',
+        style: 'background-color: blue; color:white;',
+        rows: []
+      };
+      this.get('eventBus').set('transferData.model', sectionModel);
     }
   }
 });

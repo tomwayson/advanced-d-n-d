@@ -67,21 +67,58 @@ export default Ember.Component.extend({
     if(!td || td.objectType !=='section') {
       return;
     }
+
+    // user is draggini sections, we'll handle this
     event.preventDefault();
   },
 
-  drop(event){
+  dragLeave(){
+    this.get('eventBus').trigger('hideDropTarget');
+  },
+
+  drop(/*event*/){
     let td = this.get('eventBus.transferData');
-    if(td){
-      console.info('DROP ON PAGE-LAYOUT-EDITOR ' + this.get('elementId') + ' for ' + td.objectType);
+    // only if dragged object is a section
+    if(!td || td.objectType !=='section') {
+      return;
     }
+    console.info('DROP ON PAGE-LAYOUT-EDITOR ' + this.get('elementId') + ' for ' + td.objectType);
+
+    // we're droppin' sections
+    // get the section from the event bus
+    let newSection = td.model;
+    // if we're moving a section, need to first
+    // remove it from the page
+    if (td.dragType === 'move') {
+      this._removeSection(newSection);
+    }
+
+    // insert the section
+    this._insertSection(newSection, td.dropSectionInfo.section, td.dropSectionInfo.insertAfter);
+
+    // clear event bus drag/drop info
+    // and hide drop target
+    this.set('eventBus.transferData', null);
+    this.get('eventBus').trigger('hideDropTarget');
+  },
+
+  _insertSection(section, targetSection, insertAfter) {
+    const sections = this.get('model.sections');
+    // where to insert?
+    // default to the begining (left)
+    let pos = 0;
+    if (targetSection) {
+      // if inserting before, use target card's current index
+      // otherwise (inserting after) use the next index
+      pos = sections.indexOf(targetSection) + (insertAfter ? 1 : 0);
+    }
+    sections.insertAt(pos, section);
   },
 
   _removeSection(section){
     console.info('PAGE-LAYOUT-EDITOR _removeSection');
     this.set('model.sections', this.get('model.sections').without(section));
   },
-
 
   actions: {
     onRowDrop(e, row) {
