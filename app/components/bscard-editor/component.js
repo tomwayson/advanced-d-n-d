@@ -4,11 +4,6 @@ export default Ember.Component.extend({
   classNames:['card-editor'],
   classNameBindings:['bootstrapGridClass'],
 
-  attributeBindings:['draggable'],
-  //make this component draggable
-  draggable:false,
-
-
   bootstrapGridClass:Ember.computed('model.width', function(){
     return 'col-md-' + this.get('model.width');
   }),
