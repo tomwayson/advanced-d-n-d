@@ -9,8 +9,8 @@ export default Ember.Component.extend({
   cardQueue: [],
   onNoCards: Ember.observer('model.cards.length', function(){
     if(this.get('model.cards.length') === 0){
-      console.log('cards is empty, sending onRowDelete');
-      this.sendAction('onRowDelete', this.get('model'));
+      console.log('cards is empty, sending onRowRemove');
+      this.sendAction('onRowRemove', this.get('model'));
     }
   }),
 
@@ -137,7 +137,7 @@ export default Ember.Component.extend({
           //ok we can split
           // if we're moving a card, remove it from it's original row
           if (td.dragType === 'move') {
-            this.sendAction('onCardDelete', newCard, td.draggedFromRow);
+            this.sendAction('onCardRemove', newCard, td.draggedFromRow);
           }
           // make room for the dropped card by
           // splitting the target card width
@@ -310,8 +310,8 @@ export default Ember.Component.extend({
       // make sure it is removed from this row
       this.set('eventBus.transferData.draggedFromRow', this.get('model'));
     },
-    onCardDelete( cardToDelete ) {
-      this.sendAction('onCardDelete', cardToDelete, this.get('model'));
+    onCardRemove( cardToRemove ) {
+      this.sendAction('onCardRemove', cardToRemove, this.get('model'));
     },
     onUpdateCardResizer(options){
       this._updateCardResizer(options);

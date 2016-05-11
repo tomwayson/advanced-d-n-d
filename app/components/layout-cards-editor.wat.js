@@ -384,8 +384,8 @@ export default Ember.Component.extend({
       this.packCards();
       this.updateCanvasHeight();
     },
-    onCardDelete: function(card){
-      console.log('card-canvas:onCardDelete ');
+    onCardRemove: function(card){
+      console.log('card-canvas:onCardRemove ');
       this.get('eventBus').trigger('modelChanged');
       this.get('eventBus').trigger('modelChanged');
       this.set('cards', this.get('cards').without(card));

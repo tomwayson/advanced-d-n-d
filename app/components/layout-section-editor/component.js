@@ -41,7 +41,7 @@ export default Ember.Component.extend({
   /**
    * Centralized Handling of Card Removal
    */
-  _removeCard(cardToDelete, row) {
+  _removeCard(cardToRemove, row) {
     let cards= row.cards;
     //Scenarios:
     //  Row has one card, and we are deleting it
@@ -60,24 +60,24 @@ export default Ember.Component.extend({
     //
 
       //get the index of the card we are about to delete
-      let deletedCardIndex = cards.indexOf( cardToDelete );
-      if (deletedCardIndex === -1) {
+      let removeCardIndex = cards.indexOf( cardToRemove );
+      if (removeCardIndex === -1) {
         // card not found, bail out
         return;
       }
       //assume we will expand the first card (left)...
       let expandCardIndex = 1;
-      if(deletedCardIndex > 0){
+      if(removeCardIndex > 0){
         //we expand the card at index 1
-        expandCardIndex = deletedCardIndex - 1;
+        expandCardIndex = removeCardIndex - 1;
       }
       //get the card to expan
       let expandCard = cards.objectAt(expandCardIndex);
       //expanded width
-      let expandedWidth = cardToDelete.width + expandCard.width;
+      let expandedWidth = cardToRemove.width + expandCard.width;
       Ember.set(expandCard, 'width', expandedWidth);
       //remove the card
-      Ember.set(row, 'cards', cards.without( cardToDelete ));
+      Ember.set(row, 'cards', cards.without( cardToRemove ));
     }
   },
 
@@ -234,18 +234,17 @@ export default Ember.Component.extend({
   },
 
   actions: {
-    onRowDelete( row ){
+    onRowRemove( row ){
       this._removeRow(row);
     },
-    onCardDelete(card, row) {
+    onCardRemove(card, row) {
       this._removeCard(card, row);
     },
-    removeSection(section) {
-      this.sendAction('onRemoveSection', section);
+    removeSection() {
+      this.sendAction('onRemoveSection', this.get('model'));
     },
-    editSection(section) {
-      this.sendAction('onEditSection', section);
+    editSection() {
+      this.sendAction('onEditSection', this.get('model'));
     }
   }
-
 });

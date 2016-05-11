@@ -248,12 +248,14 @@ export default Ember.Component.extend({
     onModelChanged() {
 
     },
-
-    deleteCard(){
-      Ember.debug('bscard-editor:deleteCard...');
-      this.sendAction('onCardDelete', this.get('model'));
+    removeCard(){
+      Ember.debug('bscard-editor:removeCard...');
+      this.sendAction('onCardRemove', this.get('model'));
       //this.destroy();
     },
-
+    editCard() {
+      Ember.debug('bscard-editor:editCard...');
+      this.sendAction('onCardEdit', this.get('model'));
+    }
   }
 });

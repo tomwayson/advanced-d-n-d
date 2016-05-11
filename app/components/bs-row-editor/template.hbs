@@ -2,7 +2,7 @@
   {{bscard-editor model=card
                   onCardDrag=(action 'onCardDrag')
                   onUpdateCardResizer=(action 'onUpdateCardResizer' )
-                  onCardDelete=(action 'onCardDelete')}}
+                  onCardRemove=(action 'onCardRemove')}}
 {{/each}}
 {{card-resizer model=resizerModel
                  onShift=(action 'onShiftSharedEdge')}}
