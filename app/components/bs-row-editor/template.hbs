@@ -4,8 +4,5 @@
                   onUpdateCardResizer=(action 'onUpdateCardResizer' )
                   onCardDelete=(action 'onCardDelete')}}
 {{/each}}
-
-
-  {{card-resizer model=resizerModel
-                 onShift=(action 'onShiftSharedEdge')
-               }}
+{{card-resizer model=resizerModel
+                 onShift=(action 'onShiftSharedEdge')}}

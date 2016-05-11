@@ -78,6 +78,7 @@ export default Ember.Component.extend({
   },
 
   _removeSection(section){
+    console.info('PAGE-LAYOUT-EDITOR _removeSection');
     this.set('model.sections', this.get('model.sections').without(section));
   },
 
@@ -91,6 +92,7 @@ export default Ember.Component.extend({
       this.set('moveRow', row);
     },
     onDeleteSection(section){
+      console.info('PAGE-LAYOUT-EDITOR onDeleteSection');
       this._removeSection(section);
     }
 
