@@ -10,7 +10,7 @@ export default Ember.Component.extend({
   action:'add-card',
   dragImageOffsetX: 0,
   dragImageOffsetY: 0,
-  eventBus: Ember.inject.service('event-bus'),
+  layoutCoordinator: Ember.inject.service('layout-coordinator'),
 
   dragStart(e){
     const dragType = this.get('dragType');
@@ -22,7 +22,7 @@ export default Ember.Component.extend({
 
     console.log('DRAGGABLE-OBJECT Start for  ' + objectType);
     // set the drag properties on the event bus
-    this.set('eventBus.transferData', {
+    this.set('layoutCoordinator.transferData', {
       dragType: dragType,
       objectType: objectType,
       // default action based on drag/object type

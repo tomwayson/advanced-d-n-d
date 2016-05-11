@@ -16,7 +16,7 @@ export default Ember.Component.extend({
   /**
    * Get the event bus
    */
-  eventBus: Ember.inject.service('event-bus'),
+  layoutCoordinator: Ember.inject.service('layout-coordinator'),
 
   ignoreNextLeave:false,
 
@@ -53,7 +53,7 @@ export default Ember.Component.extend({
    */
   drop(event){
     Ember.$('.crack').css({display:"none"});
-    this.get('eventBus').trigger('hideDropTarget');
+    this.get('layoutCoordinator').trigger('hideDropTarget');
   },
 
   /**
@@ -61,7 +61,7 @@ export default Ember.Component.extend({
    * - show the cracks
    */
   dragOver(event){
-    let td = this.get('eventBus.transferData');
+    let td = this.get('layoutCoordinator.transferData');
 
     // only if dragged object is a card
     if (!td || td.objectType !== 'card') {
@@ -144,15 +144,15 @@ export default Ember.Component.extend({
     // }
 
     if(dropTargetModel){
-      this.get('eventBus').trigger('showDropTarget', dropTargetModel);
+      this.get('layoutCoordinator').trigger('showDropTarget', dropTargetModel);
     }
     // set target card and before/after
     // TODO: change to .transferData.
-    this.set('eventBus.dropCardInfo', {
+    this.set('layoutCoordinator.dropCardInfo', {
       card: this.get('model'),
       insertAfter:insertAfter
     });
-    this.set('eventBus.transferData.action', td.dragType + '-card');
+    this.set('layoutCoordinator.transferData.action', td.dragType + '-card');
   },
 
 
@@ -163,7 +163,7 @@ export default Ember.Component.extend({
   dragLeave(event){
     if(!this.get('ignoreNextLeave')) {
       //Ember.$('.crack').css({display:"none"});
-      this.get('eventBus').trigger('hideDropTarget');
+      this.get('layoutCoordinator').trigger('hideDropTarget');
     }else{
       this.set('ignoreNextLeave', false);
     }

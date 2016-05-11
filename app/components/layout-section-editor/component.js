@@ -113,10 +113,10 @@ export default Ember.Component.extend({
   /**
    * Get the event bus
    */
-  eventBus: Ember.inject.service('event-bus'),
+  layoutCoordinator: Ember.inject.service('layout-coordinator'),
 
   dragEnter(event){
-    let td = this.get('eventBus.transferData');
+    let td = this.get('layoutCoordinator.transferData');
 
     // only if dragged object is a section or adding a row
     if(!td || (td.objectType !=='section' && td.action !== 'add-row')) {
@@ -127,10 +127,10 @@ export default Ember.Component.extend({
     event.preventDefault();
   },
   dragLeave(){
-    this.get('eventBus').trigger('hideDropTarget');
+    this.get('layoutCoordinator').trigger('hideDropTarget');
   },
   dragOver(event){
-    let td = this.get('eventBus.transferData');
+    let td = this.get('layoutCoordinator.transferData');
 
     // only if dragged object is a section or adding a row
     if(!td) {
@@ -184,10 +184,10 @@ export default Ember.Component.extend({
       }
 
       if(dropTargetModel){
-        this.get('eventBus').trigger('showDropTarget', dropTargetModel);
+        this.get('layoutCoordinator').trigger('showDropTarget', dropTargetModel);
       }
-      this.set('eventBus.transferData.action', transferAction);
-      this.set('eventBus.transferData.dropSectionInfo', {
+      this.set('layoutCoordinator.transferData.action', transferAction);
+      this.set('layoutCoordinator.transferData.dropSectionInfo', {
         section: this.get('model'),
         insertAfter:insertAfter
       });
@@ -197,12 +197,12 @@ export default Ember.Component.extend({
         // dragging over section w/o rows, we'll handle this
         event.preventDefault();
         // want to add row if dropped here
-        this.set('eventBus.transferData.action', 'add-row');
+        this.set('layoutCoordinator.transferData.action', 'add-row');
       }
     }
   },
   drop(event){
-    let td = this.get('eventBus.transferData');
+    let td = this.get('layoutCoordinator.transferData');
     if(!td){
       return;
     }
@@ -229,7 +229,7 @@ export default Ember.Component.extend({
         pos = this.get('model.rows').indexOf(td.dropRowInfo.row) + (td.dropRowInfo.insertAfter ? 1:0);
       }
       this.get('model.rows').insertAt(pos, row);
-      this.set('eventBus.transferData', null);
+      this.set('layoutCoordinator.transferData', null);
     }
   },
 

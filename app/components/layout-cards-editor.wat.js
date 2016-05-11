@@ -9,20 +9,20 @@ export default Ember.Component.extend({
   /**
    * Get the event bus
    */
-  eventBus: Ember.inject.service('event-bus'),
+  layoutCoordinator: Ember.inject.service('layout-coordinator'),
   /**
    * Add handlers
    */
   listen: function(){
-    this.get('eventBus').on('addCard', this, 'addCard');
-    this.get('eventBus').on('serialize', this, 'serialize');
+    this.get('layoutCoordinator').on('addCard', this, 'addCard');
+    this.get('layoutCoordinator').on('serialize', this, 'serialize');
   }.on('init'),
   /**
    * Remove handlers
    */
   cleanup: function(){
-    this.get('eventBus').off('addCard', this, 'addCard');
-    this.get('eventBus').off('serialize', this, 'serialize');
+    this.get('layoutCoordinator').off('addCard', this, 'addCard');
+    this.get('layoutCoordinator').off('serialize', this, 'serialize');
   }.on('willDestroyElement'),
 
 
@@ -360,7 +360,7 @@ export default Ember.Component.extend({
     //ensure that canvas fits this new card...
     self.updateCanvasHeight();
     //mark the model as dirty
-    this.get('eventBus').trigger('modelChanged');
+    this.get('layoutCoordinator').trigger('modelChanged');
   },
 
   /**
@@ -378,16 +378,16 @@ export default Ember.Component.extend({
     },
     onLayoutChangeComplete: function(card){
       console.log('card-canvas:onLayoutChangeComplete ' + card.x + ', ' + card.y);
-      //use the eventBus to notify upstream things that some model has changed
-      this.get('eventBus').trigger('modelChanged');
+      //use the layoutCoordinator to notify upstream things that some model has changed
+      this.get('layoutCoordinator').trigger('modelChanged');
       this.fixCollisions(card);
       this.packCards();
       this.updateCanvasHeight();
     },
     onCardRemove: function(card){
       console.log('card-canvas:onCardRemove ');
-      this.get('eventBus').trigger('modelChanged');
-      this.get('eventBus').trigger('modelChanged');
+      this.get('layoutCoordinator').trigger('modelChanged');
+      this.get('layoutCoordinator').trigger('modelChanged');
       this.set('cards', this.get('cards').without(card));
       this.packCards();
     },
