@@ -3,14 +3,14 @@
     {{#draggable-object dragType="move" objectType="section" model=model }}
       <span class="glyphicon glyphicon-move card-editor-drag-handle"></span>
     {{/draggable-object}}
-    <a href="#" {{action "editSection" model}}><span class="glyphicon glyphicon-cog"/></a>
-    <a href="#" {{action "removeSection" model}}><span class="glyphicon glyphicon-remove"/></a>
+    <a href="#" {{action "editSection"}}><span class="glyphicon glyphicon-cog"/></a>
+    <a href="#" {{action "removeSection"}}><span class="glyphicon glyphicon-remove"/></a>
   </div>
   {{#if hasRows}}
     {{#each model.rows as |row|}}
       {{bs-row-editor model=row
-                      onRowDelete=(action 'onRowDelete')
-                      onCardDelete=(action 'onCardDelete')
+                      onRowRemove=(action 'onRowRemove')
+                      onCardRemove=(action 'onCardRemove')
                     }}
     {{/each}}
   {{else}}

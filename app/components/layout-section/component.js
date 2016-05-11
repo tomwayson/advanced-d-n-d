@@ -18,6 +18,6 @@ export default Ember.Component.extend({
   /**
    * Get the event bus
    */
-  eventBus: Ember.inject.service('event-bus'),
+  layoutCoordinator: Ember.inject.service('layout-coordinator'),
 
 });

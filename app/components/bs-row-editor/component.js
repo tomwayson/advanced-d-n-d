@@ -2,15 +2,15 @@ import Ember from 'ember';
 
 export default Ember.Component.extend({
   classNames:['row', 'bs-row-editor'],
-  eventBus: Ember.inject.service(),
+  layoutCoordinator: Ember.inject.service('layout-coordinator'),
   resizerModel: {},
   //queue of cards to add... allows us to defer some
   //changes until after css transitions have happened...
   cardQueue: [],
   onNoCards: Ember.observer('model.cards.length', function(){
     if(this.get('model.cards.length') === 0){
-      console.log('cards is empty, sending onRowDelete');
-      this.sendAction('onRowDelete', this.get('model'));
+      console.log('cards is empty, sending onRowRemove');
+      this.sendAction('onRowRemove', this.get('model'));
     }
   }),
 
@@ -32,7 +32,7 @@ export default Ember.Component.extend({
   ignoreNextLeave:false,
 
   dragEnter(event){
-    let td = this.get('eventBus.transferData');
+    let td = this.get('layoutCoordinator.transferData');
     // only if dragged object is a card
     if(!td || td.objectType !== 'card') {
       return;
@@ -41,7 +41,7 @@ export default Ember.Component.extend({
   },
 
   dragOver(event){
-    let td = this.get('eventBus.transferData');
+    let td = this.get('layoutCoordinator.transferData');
 
     // only if dragged object is a card
     if(!td || td.objectType !== 'card'){
@@ -89,10 +89,10 @@ export default Ember.Component.extend({
     }
 
     if(dropTargetModel){
-      this.get('eventBus').trigger('showDropTarget', dropTargetModel);
+      this.get('layoutCoordinator').trigger('showDropTarget', dropTargetModel);
     }
-    this.set('eventBus.transferData.action', transferAction);
-    this.set('eventBus.transferData.dropRowInfo', {
+    this.set('layoutCoordinator.transferData.action', transferAction);
+    this.set('layoutCoordinator.transferData.dropRowInfo', {
       row: this.get('model'),
       insertAfter:insertAfter
     });
@@ -103,11 +103,11 @@ export default Ember.Component.extend({
   drop(event){
     //set the crack css
     //this.$('.row-crack').css({"display":"none"});
-    this.get('eventBus').trigger('hideDropTarget');
+    this.get('layoutCoordinator').trigger('hideDropTarget');
 
-    let eventBus = this.get('eventBus');
-    //get the transferData from the eventBus
-    let td = this.get('eventBus.transferData');
+    let layoutCoordinator = this.get('layoutCoordinator');
+    //get the transferData from the layoutCoordinator
+    let td = this.get('layoutCoordinator.transferData');
     // row handler only supports adding/moving cards
     if(!td || (td.action !== 'add-card' && td.action !== 'move-card')) {
       return;
@@ -123,7 +123,7 @@ export default Ember.Component.extend({
 
 
     let targetCard, insertAfter;
-    let dropCardInfo = eventBus.get('dropCardInfo');
+    let dropCardInfo = layoutCoordinator.get('dropCardInfo');
     if (dropCardInfo) {
       // our drop target is a card
       targetCard = dropCardInfo.card;
@@ -137,7 +137,7 @@ export default Ember.Component.extend({
           //ok we can split
           // if we're moving a card, remove it from it's original row
           if (td.dragType === 'move') {
-            this.sendAction('onCardDelete', newCard, td.draggedFromRow);
+            this.sendAction('onCardRemove', newCard, td.draggedFromRow);
           }
           // make room for the dropped card by
           // splitting the target card width
@@ -150,18 +150,18 @@ export default Ember.Component.extend({
         }
       }
       // clear event bus drop info
-      this.set('eventBus.dropCardInfo', null);
+      this.set('layoutCoordinator.dropCardInfo', null);
     }else{
       console.error('Card can not be dropped at this location.');
     }
 
     // clear event bus drag info
-    this.set('eventBus.transferData', null);
+    this.set('layoutCoordinator.transferData', null);
     event.preventDefault();
   },
 
   dragLeave(){
-    this.get('eventBus').trigger('hideDropTarget');
+    this.get('layoutCoordinator').trigger('hideDropTarget');
   },
   mouseLeave(/*event*/){
     //when the mouse leaves this component, we should hide all resizers and crack
@@ -308,10 +308,10 @@ export default Ember.Component.extend({
     onCardDrag() {
       // if card is dragged to another row
       // make sure it is removed from this row
-      this.set('eventBus.transferData.draggedFromRow', this.get('model'));
+      this.set('layoutCoordinator.transferData.draggedFromRow', this.get('model'));
     },
-    onCardDelete( cardToDelete ) {
-      this.sendAction('onCardDelete', cardToDelete, this.get('model'));
+    onCardRemove( cardToRemove ) {
+      this.sendAction('onCardRemove', cardToRemove, this.get('model'));
     },
     onUpdateCardResizer(options){
       this._updateCardResizer(options);

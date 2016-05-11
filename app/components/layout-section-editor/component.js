@@ -41,7 +41,7 @@ export default Ember.Component.extend({
   /**
    * Centralized Handling of Card Removal
    */
-  _removeCard(cardToDelete, row) {
+  _removeCard(cardToRemove, row) {
     let cards= row.cards;
     //Scenarios:
     //  Row has one card, and we are deleting it
@@ -60,24 +60,24 @@ export default Ember.Component.extend({
     //
 
       //get the index of the card we are about to delete
-      let deletedCardIndex = cards.indexOf( cardToDelete );
-      if (deletedCardIndex === -1) {
+      let removeCardIndex = cards.indexOf( cardToRemove );
+      if (removeCardIndex === -1) {
         // card not found, bail out
         return;
       }
       //assume we will expand the first card (left)...
       let expandCardIndex = 1;
-      if(deletedCardIndex > 0){
+      if(removeCardIndex > 0){
         //we expand the card at index 1
-        expandCardIndex = deletedCardIndex - 1;
+        expandCardIndex = removeCardIndex - 1;
       }
       //get the card to expan
       let expandCard = cards.objectAt(expandCardIndex);
       //expanded width
-      let expandedWidth = cardToDelete.width + expandCard.width;
+      let expandedWidth = cardToRemove.width + expandCard.width;
       Ember.set(expandCard, 'width', expandedWidth);
       //remove the card
-      Ember.set(row, 'cards', cards.without( cardToDelete ));
+      Ember.set(row, 'cards', cards.without( cardToRemove ));
     }
   },
 
@@ -113,10 +113,10 @@ export default Ember.Component.extend({
   /**
    * Get the event bus
    */
-  eventBus: Ember.inject.service('event-bus'),
+  layoutCoordinator: Ember.inject.service('layout-coordinator'),
 
   dragEnter(event){
-    let td = this.get('eventBus.transferData');
+    let td = this.get('layoutCoordinator.transferData');
 
     // only if dragged object is a section or adding a row
     if(!td || (td.objectType !=='section' && td.action !== 'add-row')) {
@@ -127,10 +127,10 @@ export default Ember.Component.extend({
     event.preventDefault();
   },
   dragLeave(){
-    this.get('eventBus').trigger('hideDropTarget');
+    this.get('layoutCoordinator').trigger('hideDropTarget');
   },
   dragOver(event){
-    let td = this.get('eventBus.transferData');
+    let td = this.get('layoutCoordinator.transferData');
 
     // only if dragged object is a section or adding a row
     if(!td) {
@@ -184,10 +184,10 @@ export default Ember.Component.extend({
       }
 
       if(dropTargetModel){
-        this.get('eventBus').trigger('showDropTarget', dropTargetModel);
+        this.get('layoutCoordinator').trigger('showDropTarget', dropTargetModel);
       }
-      this.set('eventBus.transferData.action', transferAction);
-      this.set('eventBus.transferData.dropSectionInfo', {
+      this.set('layoutCoordinator.transferData.action', transferAction);
+      this.set('layoutCoordinator.transferData.dropSectionInfo', {
         section: this.get('model'),
         insertAfter:insertAfter
       });
@@ -197,12 +197,12 @@ export default Ember.Component.extend({
         // dragging over section w/o rows, we'll handle this
         event.preventDefault();
         // want to add row if dropped here
-        this.set('eventBus.transferData.action', 'add-row');
+        this.set('layoutCoordinator.transferData.action', 'add-row');
       }
     }
   },
   drop(event){
-    let td = this.get('eventBus.transferData');
+    let td = this.get('layoutCoordinator.transferData');
     if(!td){
       return;
     }
@@ -229,23 +229,22 @@ export default Ember.Component.extend({
         pos = this.get('model.rows').indexOf(td.dropRowInfo.row) + (td.dropRowInfo.insertAfter ? 1:0);
       }
       this.get('model.rows').insertAt(pos, row);
-      this.set('eventBus.transferData', null);
+      this.set('layoutCoordinator.transferData', null);
     }
   },
 
   actions: {
-    onRowDelete( row ){
+    onRowRemove( row ){
       this._removeRow(row);
     },
-    onCardDelete(card, row) {
+    onCardRemove(card, row) {
       this._removeCard(card, row);
     },
-    removeSection(section) {
-      this.sendAction('onRemoveSection', section);
+    removeSection() {
+      this.sendAction('onRemoveSection', this.get('model'));
     },
-    editSection(section) {
-      this.sendAction('onEditSection', section);
+    editSection() {
+      this.sendAction('onEditSection', this.get('model'));
     }
   }
-
 });

@@ -14,18 +14,18 @@ export default Ember.Component.extend({
   /**
    * Get the event bus
    */
-  eventBus: Ember.inject.service('event-bus'),
+  layoutCoordinator: Ember.inject.service('layout-coordinator'),
 
   init(){
     this._super(...arguments);
-    //event handler to listen to eventBus
-    this.get('eventBus').on('showDropTarget', this, 'onShowDropTarget');
-    this.get('eventBus').on('hideDropTarget', this, 'onHideDropTarget');
+    //event handler to listen to layoutCoordinator
+    this.get('layoutCoordinator').on('showDropTarget', this, 'onShowDropTarget');
+    this.get('layoutCoordinator').on('hideDropTarget', this, 'onHideDropTarget');
   },
 
   willDestroyElement(){
-    this.get('eventBus').off('showDropTarget', this, 'onShowDropTarget');
-    this.get('eventBus').off('hideDropTarget', this, 'onHideDropTarget');
+    this.get('layoutCoordinator').off('showDropTarget', this, 'onShowDropTarget');
+    this.get('layoutCoordinator').off('hideDropTarget', this, 'onHideDropTarget');
   },
 
   /**
@@ -47,7 +47,7 @@ export default Ember.Component.extend({
   },
 
   dragEnter(event){
-    let td = this.get('eventBus.transferData');
+    let td = this.get('layoutCoordinator.transferData');
 
     // only if dragged object is a section
     if(!td || td.objectType !=='section') {
@@ -61,7 +61,7 @@ export default Ember.Component.extend({
 
   dragOver(event){
     //can accept a section
-    let td = this.get('eventBus.transferData');
+    let td = this.get('layoutCoordinator.transferData');
 
     // only if dragged object is a section
     if(!td || td.objectType !=='section') {
@@ -73,11 +73,11 @@ export default Ember.Component.extend({
   },
 
   dragLeave(){
-    this.get('eventBus').trigger('hideDropTarget');
+    this.get('layoutCoordinator').trigger('hideDropTarget');
   },
 
   drop(/*event*/){
-    let td = this.get('eventBus.transferData');
+    let td = this.get('layoutCoordinator.transferData');
     // only if dragged object is a section
     if(!td || td.objectType !=='section') {
       return;
@@ -98,8 +98,8 @@ export default Ember.Component.extend({
 
     // clear event bus drag/drop info
     // and hide drop target
-    this.set('eventBus.transferData', null);
-    this.get('eventBus').trigger('hideDropTarget');
+    this.set('layoutCoordinator.transferData', null);
+    this.get('layoutCoordinator').trigger('hideDropTarget');
   },
 
   _insertSection(section, targetSection, insertAfter) {

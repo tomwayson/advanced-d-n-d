@@ -5,7 +5,7 @@ export default Ember.Controller.extend({
   // this is just used to verify that we're adding new cards
   _lastPlaceHolderCardId: 100,
 
-  eventBus: Ember.inject.service('event-bus'),
+  layoutCoordinator: Ember.inject.service('layout-coordinator'),
 
   getCardDefaults(cardType) {
     if (cardType === 'placeholder') {
@@ -35,7 +35,7 @@ export default Ember.Controller.extend({
   actions: {
     onCardDragStart(cardType) {
       const cardModel = this.getCardDefaults(cardType);
-      this.get('eventBus').set('transferData.model', cardModel);
+      this.get('layoutCoordinator').set('transferData.model', cardModel);
     },
     onSectionDragStart() {
       const sectionModel = {
@@ -43,7 +43,7 @@ export default Ember.Controller.extend({
         style: 'background-color: blue; color:white;',
         rows: []
       };
-      this.get('eventBus').set('transferData.model', sectionModel);
+      this.get('layoutCoordinator').set('transferData.model', sectionModel);
     }
   }
 });
