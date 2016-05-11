@@ -7,7 +7,12 @@ export default Ember.Component.extend({
   //queue of cards to add... allows us to defer some
   //changes until after css transitions have happened...
   cardQueue: [],
-
+  onNoCards: Ember.observer('model.cards.length', function(){
+    if(this.get('model.cards.length') === 0){
+      console.log('cards is empty, sending onRowDelete');
+      this.sendAction('onRowDelete', this.get('model'));
+    }
+  }),
 
   // insert a card either at the begining
   // or before/after the target card
