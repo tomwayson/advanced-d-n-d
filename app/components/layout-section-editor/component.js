@@ -239,6 +239,12 @@ export default Ember.Component.extend({
     },
     onCardDelete(card, row) {
       this._removeCard(card, row);
+    },
+    removeSection(section) {
+      this.sendAction('onRemoveSection', section);
+    },
+    editSection(section) {
+      this.sendAction('onEditSection', section);
     }
   }
 

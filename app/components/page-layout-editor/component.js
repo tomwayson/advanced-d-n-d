@@ -128,8 +128,8 @@ export default Ember.Component.extend({
     onStartMove(e, row) {
       this.set('moveRow', row);
     },
-    onDeleteSection(section){
-      console.info('PAGE-LAYOUT-EDITOR onDeleteSection');
+    onRemoveSection(section){
+      console.info('PAGE-LAYOUT-EDITOR onRemoveSection');
       this._removeSection(section);
     }
 
