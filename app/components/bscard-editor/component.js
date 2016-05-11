@@ -33,7 +33,7 @@ export default Ember.Component.extend({
     if (!$target.hasClass('draggable')) {
       return;
     }
-
+    event.dataTransfer.setData('foo/custom','so firefox works');
     // b/c we're dragging from upper right corner,
     // want to shift to the left by width of the element
     // TODO: probably want to set drag image offset x/y dynamically

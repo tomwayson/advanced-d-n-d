@@ -157,6 +157,7 @@ export default Ember.Component.extend({
 
     // clear event bus drag info
     this.set('eventBus.transferData', null);
+    event.preventDefault();
   },
 
   dragLeave(){
