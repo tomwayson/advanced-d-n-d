@@ -201,7 +201,7 @@ export default Ember.Component.extend({
       }
     }
   },
-  drop(/*event*/){
+  drop(event){
     let td = this.get('eventBus.transferData');
     if(!td){
       return;
@@ -210,6 +210,7 @@ export default Ember.Component.extend({
 
     //can accept an add-row action
     if(td.action === 'add-row'){
+      event.preventDefault();
       // create a row object with a single, full width card
       let newCard = td.model;
       // if we're moving a card, need to first

@@ -30,12 +30,14 @@ export default Ember.Component.extend({
       model: this.get('model')
     });
 
+    //this is literally needed because "firefox"
+    e.dataTransfer.setData('foo/custom','so firefox works');
     // set drag image?
     if (dragImage && e.dataTransfer && e.dataTransfer.setDragImage) {
       e.dataTransfer.setDragImage(dragImage, this.get('dragImageOffsetX'), this.get('dragImageOffsetY'));
     }
 
-    // let paret know that we've started dragging
+    // let parent know that we've started dragging
     this.sendAction('onDragStart');
   }
 });
