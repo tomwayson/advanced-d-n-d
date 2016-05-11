@@ -2,7 +2,7 @@
 {{#if hasSections}}
   {{#each model.sections as |section|}}
     {{layout-section-editor model=section
-                  onDeleteSection=(action 'onDeleteSection')
+                  onRemoveSection=(action 'onRemoveSection')
                 }}
   {{/each}}
 {{else}}
