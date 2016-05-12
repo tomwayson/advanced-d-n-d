@@ -7,6 +7,8 @@ $link-color: #555555;
 @import 'dock-panel';
 @import 'drop-target';
 @import 'card-resizer';
+@import 'card-controls';
+@import 'card-drop-targets';
 @import 'blank-card';
 // TODO: replace w/ 1 per component, or remove?
 @import 'tom';

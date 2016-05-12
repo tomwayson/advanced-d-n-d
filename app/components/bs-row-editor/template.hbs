@@ -1,5 +1,5 @@
 {{#each model.cards as |card|}}
-  {{bscard-editor model=card
+  {{bs-card-editor model=card
                   onCardDrag=(action 'onCardDrag')
                   onUpdateCardResizer=(action 'onUpdateCardResizer' )
                   onCardRemove=(action 'onCardRemove')}}

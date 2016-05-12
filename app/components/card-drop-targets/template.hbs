@@ -1,0 +1,7 @@
+<div class="target-container" style={{targetContainerStyle}}>
+  <div class="card-drop-target left" {{action "updateDockingTarget" "left" true on="mouseEnter"}} {{action "updateDockingTarget" on="mouseLeave"}}></div>
+  <div class="card-drop-target right" {{action "updateDockingTarget" "right" true on="mouseEnter"}} {{action "updateDockingTarget" on="mouseLeave"}}></div>
+</div>
+<div class="preview" style={{previewStyle}}>
+  <h5 class="message">{{dockMessage}}</h5>
+</div>
