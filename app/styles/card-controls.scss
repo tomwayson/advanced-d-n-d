@@ -1,32 +1,4 @@
 .card-controls-container {
   display:block;
   position:absolute;
-  .card-control {
-    display: table;
-    width: 32px;
-    height: 32px;
-    -moz-user-select: none;
-    -khtml-user-select: none;
-    -webkit-user-select: none;
-    cursor: pointer;
-    z-index: 580;
-    opacity: 1;
-    background-color: #f8f8f8;
-    background-position: 0 0;
-    box-shadow: 0 0 20px 3px rgba(0, 0, 0, .2);
-
-    &.move-card {
-      background-image: url("./images/move-item.ico");
-      cursor: default;
-    }
-
-    &.configure-card {
-      background-image: url("./images/configure-item.ico");
-      cursor: pointer;
-    }
-  }
-}
-
-.invisible {
-  display:none;
 }

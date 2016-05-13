@@ -28,10 +28,10 @@ export default Ember.Component.extend({
     let rect = componentElement.getBoundingClientRect();
     //create a json object that accounts for scroll position
     let cp = {
-      top: rect.top + window.scrollY,
-      left: rect.left + window.scrollX,
-      bottom: rect.bottom + window.scrollY,
-      right: rect.right + window.scrollX,
+      top: rect.top + window.pageYOffset,
+      left: rect.left + window.pageXOffset,
+      bottom: rect.bottom + window.pageYOffset,
+      right: rect.right + window.pageXOffset,
       width: rect.width,
       height: rect.height
     };
@@ -144,8 +144,8 @@ export default Ember.Component.extend({
       // user is dragging sections
       //get the x,y from the event
       let mousePos = {
-        x: event.originalEvent.clientX + window.scrollX,
-        y: event.originalEvent.clientY + window.scrollY
+        x: event.originalEvent.clientX + window.pageXOffset,
+        y: event.originalEvent.clientY + window.pageYOffset
       };
 
       //get the card rectangle

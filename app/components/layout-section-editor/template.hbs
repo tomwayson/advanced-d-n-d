@@ -1,14 +1,20 @@
 <div class="{{containerClass}}" >
-  <div class="section-controls">
-    {{#draggable-object dragType="move" objectType="section" model=model }}
-      <span class="glyphicon glyphicon-move card-editor-drag-handle"></span>
-    {{/draggable-object}}
-    <a href="#" {{action "editSection"}}><span class="glyphicon glyphicon-cog"/></a>
-    <a href="#" {{action "removeSection"}}><span class="glyphicon glyphicon-remove"/></a>
+  <div class="section-controls-container">
+    <span class="layout-control" {{action "editSection"}}>
+      <span class="glyphicon glyphicon-move boxed"></span>
+    </span>
+    <span class="layout-control" {{action "editSection"}}>
+      <span class="glyphicon glyphicon-cog boxed"/>
+    </span>
+    <span class="layout-control" {{action "removeSection"}}>
+      <span class="glyphicon glyphicon-remove boxed"/>
+    </span>
+
   </div>
   {{#if hasRows}}
     {{#each model.rows as |row|}}
       {{bs-row-editor model=row
+                      layoutEditor=layoutEditor
                       onRowRemove=(action 'onRowRemove')
                       onCardRemove=(action 'onCardRemove')
                     }}

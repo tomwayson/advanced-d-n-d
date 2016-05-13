@@ -3,6 +3,7 @@
     display: block;
     position: absolute;
     outline: 1px dashed purple;
+
     .card-drop-target {
 
       position: absolute;
@@ -27,24 +28,52 @@
         left: 15px;
         background-image: url("./images/dock_left.png");
       }
-      &.left:hover {
+      &.left.hover {
         background-image: url("./images/dock_left_sel.png");
       }
       &.right {
         right: 15px;
         background-image: url("./images/dock_right.png");
       }
-      &.right:hover {
+      &.right.hover {
         background-image: url("./images/dock_right_sel.png");
       }
     }
   }
   .preview {
     position:absolute;
-    background-color:#6cb4e2;//$Calcite_Blue_150;
+    z-index: 500;
+    top: 0;
+    left: 0;
+    width: 200px;
+    height: 200px;
+    margin-top: -20px;
+    margin-left: -100px;
+    background-color:#efefef;//$Calcite_gray_200;
+    outline:2px solid #ffffff;
+
     .message {
       margin:10px;
       color:#828282; //$Calcite_Gray_500;
     }
+
+
+    &.positioned {
+      margin-top: 0;
+      margin-left: 0;
+      background-color:#6cb4e2;//$Calcite_Blue_150;
+    }
+  }
+}
+.table-container {
+  display: table;
+  height: 100%;
+  width: 100%;
+}
+.table-container-cell {
+  display: table-cell;
+  height: 100%;
+  &.middle {
+    vertical-align: middle;
   }
 }

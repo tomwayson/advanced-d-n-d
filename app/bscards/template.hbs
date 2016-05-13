@@ -19,9 +19,12 @@
 </div>
 
 <div id="dockPanel">
-  {{#draggable-object objectType='card' onDragStart=(action 'onCardDragStart' 'placeholder')}}DEBUG CARD{{/draggable-object}}
+  {{#card-swatch }}DEBUG CARD{{/card-swatch}}
+  {{#card-swatch }}EMPTY CARD{{/card-swatch}}
+  {{#card-swatch }}SECTION{{/card-swatch}}
+  <!-- {{#draggable-object objectType='card' onDragStart=(action 'onCardDragStart' 'placeholder')}}DEBUG CARD{{/draggable-object}}
   {{#draggable-object objectType='card' onDragStart=(action 'onCardDragStart' 'blank')}}BLANK CARD{{/draggable-object}}
-  {{#draggable-object objectType='section' onDragStart=(action 'onSectionDragStart')}}SECT{{/draggable-object}}
+  {{#draggable-object objectType='section' onDragStart=(action 'onSectionDragStart')}}SECT{{/draggable-object}} -->
 </div>
 <div class="crack"></div>
 

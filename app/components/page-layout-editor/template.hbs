@@ -2,6 +2,7 @@
 {{#if hasSections}}
   {{#each model.sections as |section|}}
     {{layout-section-editor model=section
+                  layoutEditor=this
                   onRemoveSection=(action 'onRemoveSection')
                 }}
   {{/each}}
@@ -19,5 +20,7 @@
 {{drop-target model=dropTargetModel}}
 {{card-controls visible=controlsVisible}}
 {{card-drop-targets
+    layoutEditor=this
+    dragMessage="Drag to new position"
     dockLeftMessage="Split and Dock to the left"
     dockRightMessage="Split and Dock to the right"}}

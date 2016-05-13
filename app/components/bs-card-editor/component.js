@@ -24,6 +24,16 @@ export default Ember.Component.extend({
 
   ignoreNextLeave:false,
 
+  init(){
+    this._super(...arguments);
+    this.get('layoutCoordinator').components.push(this);
+  },
+  willDestroyElement(){
+    //remove the component from the hash
+    this.set('layoutCoordinator.components', this.get('layoutCoordinator.components').without(this));
+
+  },
+
   // dragStart(event){
   //   const $el = this.$();
   //   const $target = this.$(event.target);
@@ -174,76 +184,72 @@ export default Ember.Component.extend({
   // },
 
 
-  mouseEnter(event){
-    //console.log('show the controls...');
-    if(this.get('layoutCoordinator.isDragging')){
-      this.get('layoutCoordinator').trigger( 'showCardDropTargets' , this );
-    }else{
+  mouseEnter(/*event*/){
+    if(!this.get('layoutEditor.draggingProperties')){
+      //console.log('mouseEnter: showControls for ' + this.get('elementId'));
       this.get('layoutCoordinator').trigger( 'showControls' , this );
     }
-
   },
 
   mouseLeave(event){
     //check if the mouse is still within the card...
     //get the x,y from the event
     let mousePos = {
-      x: event.originalEvent.clientX + window.scrollX,
-      y: event.originalEvent.clientY + window.scrollY
+      x: event.originalEvent.clientX + window.pageXOffset,
+      y: event.originalEvent.clientY + window.pageYOffset
     };
     let cp = this.get('componentPosition');
-    //console.log('left:x:righT ' + cp.left +'<=' + mousePos.x + '>=' + cp.right + ': ' + (mousePos.x >= cp.left && mousePos.x <= cp.right));
-    //console.log('top:y:bottom ' + cp.top +':' + mousePos.y + ':' + cp.bottom + ': ' + (mousePos.y >= cp.top  && mousePos.y <= mousePos.bottom));
+
     if(mousePos.x >= cp.left && mousePos.x <= cp.right &&
        mousePos.y >= cp.top  && mousePos.y <= cp.bottom){
       //still inside
     }else{
-      if(this.get('layoutCoordinator.isDragging')){
-        console.log('hide the dropTargets...');
-        this.get('layoutCoordinator').trigger( 'hideCardDropTargets' , this );
-      }else{
+      if(!this.get('layoutEditor.draggingProperties')){
+        console.log('mouseLeave: hideControls for ' + this.get('elementId'));
         this.get('layoutCoordinator').trigger( 'hideControls' , this );
       }
     }
-
   },
 
   mouseMove(event){
-    //if we are close to an edge, show the resizer
-    let mousePos = {
-      x: event.clientX + window.scrollX,
-      y: event.clientY + window.scrollY
-    };
-    let componentPosition = this.get('componentPosition');
-    let resizerProximity = 30;
-    let resizerVisible = false;
-    let edge = '';
-    //check if we are close to a resizable edge
-    if(mousePos.y > (componentPosition.top + 50) && mousePos.y < (componentPosition.bottom - 50)){
+    //if we don't have a drag operation underway...
+    if(!this.get('layoutEditor.draggingProperties')){
+      //we determine if we are close enough to show the resizer
+      //if we are close to an edge, show the resizer
+      let mousePos = {
+        x: event.clientX + window.pageXOffset,
+        y: event.clientY + window.pageYOffset
+      };
+      let componentPosition = this.get('componentPosition');
+      let resizerProximity = 30;
+      let resizerVisible = false;
+      let edge = '';
+      //check if we are close to a resizable edge
+      if(mousePos.y > (componentPosition.top + 50) && mousePos.y < (componentPosition.bottom - 50)){
 
-      if(mousePos.x > componentPosition.left && mousePos.x < (componentPosition.left + resizerProximity)){
-        //send event info up to the bs-row-editor which actually handles showing the resizer
-        this.sendAction('onShowCardResize', this.get('model'), 'left', componentPosition);
-        edge = 'left';
-        resizerVisible = true;
-      }
+        if(mousePos.x > componentPosition.left && mousePos.x < (componentPosition.left + resizerProximity)){
+          //send event info up to the bs-row-editor which actually handles showing the resizer
+          this.sendAction('onShowCardResize', this.get('model'), 'left', componentPosition);
+          edge = 'left';
+          resizerVisible = true;
+        }
 
-      if(mousePos.x < componentPosition.right && mousePos.x > (componentPosition.right - resizerProximity)){
-        //send event info up
-        this.sendAction('onShowCardResize', this.get('model'), 'right', componentPosition);
-        edge = 'right';
-        resizerVisible = true;
+        if(mousePos.x < componentPosition.right && mousePos.x > (componentPosition.right - resizerProximity)){
+          //send event info up
+          this.sendAction('onShowCardResize', this.get('model'), 'right', componentPosition);
+          edge = 'right';
+          resizerVisible = true;
+        }
       }
+      //console.log('BS-CARD-EDITOR:mouseMove canResize: ' + resizerVisible);
+
+      this.sendAction('onUpdateCardResizer', {
+        card: this.get('model'),
+        visible: resizerVisible,
+        edge: edge,
+        cardPosition: componentPosition
+      });
     }
-    //console.log('BS-CARD-EDITOR:mouseMove canResize: ' + resizerVisible);
-
-    this.sendAction('onUpdateCardResizer', {
-      card: this.get('model'),
-      visible: resizerVisible,
-      edge: edge,
-      cardPosition: componentPosition
-    });
-
   },
 
 
@@ -256,7 +262,7 @@ export default Ember.Component.extend({
    */
   componentPosition: Ember.computed('model.width', function(){
     return this.getComponentPosition();
-  }).volatile(),
+  }).volatile(),//
 
   /**
    * Actually get the component position from the DOM
@@ -267,12 +273,13 @@ export default Ember.Component.extend({
     let componentElement = this.$()[0];
     //low-level DOM api for-the-win
     let card = componentElement.getBoundingClientRect();
+
     //create a json object that accounts for scroll position
     let cp = {
-      top: card.top + window.scrollY,
-      left: card.left + window.scrollX,
-      bottom: card.bottom + window.scrollY,
-      right: card.right + window.scrollX,
+      top: card.top + window.pageYOffset,
+      left: card.left + window.pageXOffset,
+      bottom: card.bottom + window.pageYOffset,
+      right: card.right + window.pageXOffset,
       width: card.width,
       height: card.height
     };

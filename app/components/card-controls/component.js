@@ -1,3 +1,6 @@
+/**
+ * card-controls/component.js
+ */
 import Ember from 'ember';
 
 export default Ember.Component.extend({
@@ -40,6 +43,7 @@ export default Ember.Component.extend({
   updateStyle(componentPosition){
     let styleString = Ember.String.htmlSafe('');
     let pos = componentPosition;
+
     if(pos){
       let lf = pos.left + 10;
       let tp = pos.top + 10;
@@ -61,10 +65,6 @@ export default Ember.Component.extend({
     }
   },
   actions: {
-    startDragging(element){
-      console.log('Start Dragging the card...');
-
-    },
     removeCard(){
       this.updateStyle();
       this.get('cardComponent').removeCard();

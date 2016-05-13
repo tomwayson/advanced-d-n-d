@@ -1,3 +1,7 @@
-<span class="card-control move-card pull-left" {{action 'startDragging' tabLayoutElement on='mouseDown' bubbles=false}}></span>
-<span class="card-control configure-card pull-left" {{action "editCard"}}></span>
-<span class="card-control configure-card pull-left" {{action "removeCard"}}></span>
+{{card-drag-control cardComponent=cardComponent}}
+<span class="layout-control pull-left" {{action "editCard"}}>
+  <span class="glyphicon glyphicon-cog boxed"/>
+</span>
+<span class="layout-control pull-left" {{action "removeCard"}}>
+  <span class="glyphicon glyphicon-remove boxed"/>
+</span>

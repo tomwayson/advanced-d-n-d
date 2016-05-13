@@ -1,0 +1,35 @@
+.disable-user-select {
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.disable-pointer-events {
+  pointer-events: none;
+}
+
+
+.layout-control {
+  display: table;
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  cursor: pointer;
+  z-index: 580;
+  opacity: 1;
+  .boxed {
+    outline: 2px solid #006CAC;
+    color: #006CAC;
+    height:32px;
+    width:32px;
+    background-color: #f8f8f8;
+    text-align: center;
+    padding-top:8px;
+    font-size:15px;
+  }
+}
+
+.invisible {
+  display:none;
+}
