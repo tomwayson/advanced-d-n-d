@@ -1,8 +1,6 @@
 <div class="{{containerClass}}" >
   <div class="section-controls-container">
-    <span class="layout-control" {{action "editSection"}}>
-      <span class="glyphicon glyphicon-move boxed"></span>
-    </span>
+    {{section-drag-control sectionComponent=this}}
     <span class="layout-control" {{action "editSection"}}>
       <span class="glyphicon glyphicon-cog boxed"/>
     </span>
@@ -14,7 +12,6 @@
   {{#if hasRows}}
     {{#each model.rows as |row|}}
       {{bs-row-editor model=row
-                      layoutEditor=layoutEditor
                       onRowRemove=(action 'onRowRemove')
                       onCardRemove=(action 'onCardRemove')
                     }}

@@ -1,6 +1,12 @@
 <div class="target-container" style={{targetContainerStyle}}>
-  <div class="card-drop-target left {{if (eq dockingTarget 'left') 'hover'}}" {{action "updateDockingTarget" "left" true on="mouseEnter"}} {{action "updateDockingTarget" on="mouseLeave"}} {{action ""}}></div>
-  <div class="card-drop-target right {{if (eq dockingTarget 'right') 'hover'}}" {{action "updateDockingTarget" "right" true on="mouseEnter"}} {{action "updateDockingTarget" on="mouseLeave"}}></div>
+  <div class="card-drop-target left {{if (eq dockingTarget 'left') 'hover'}}"
+    {{action "updateDockingTarget" "left" true on="mouseEnter"}}
+    {{action "updateDockingTarget" on="mouseLeave"}}
+    ></div>
+  <div class="card-drop-target right {{if (eq dockingTarget 'right') 'hover'}}"
+    {{action "updateDockingTarget" "right" true on="mouseEnter"}}
+    {{action "updateDockingTarget" on="mouseLeave"}}
+    ></div>
 </div>
 
 

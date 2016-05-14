@@ -7,6 +7,35 @@ export default Ember.Controller.extend({
 
   layoutCoordinator: Ember.inject.service('layout-coordinator'),
 
+
+  swatches:Ember.computed('model', function(){
+    //return a collection of swatch objects
+    return [
+      {
+        text:'DEBUG',
+        dragType:'card',
+        defaults: {
+          "component": {
+            "name": "debug-card"
+          }
+        }
+      },
+      {
+        text:'PLACEHOLDER',
+        dragType:'card',
+        defaults: {
+          "component": {
+            "name": "placeholder-card"
+          }
+        }
+      },
+      {
+        text:'Add Section',
+        dragType:'section'
+      }
+    ];
+  }),
+
   getCardDefaults(cardType) {
     if (cardType === 'placeholder') {
       // increment placeholder id
