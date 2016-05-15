@@ -1,0 +1,26 @@
+.drop-preview{
+  .preview {
+    position:absolute;
+    z-index: 500;
+    top: 0;
+    left: 0;
+    width: 200px;
+    height: 200px;
+    margin-top: -20px;
+    margin-left: -100px;
+    background-color:#efefef;//$Calcite_gray_200;
+    outline:2px solid #ffffff;
+
+    .message {
+      margin:10px;
+      color:#828282; //$Calcite_Gray_500;
+    }
+
+
+    &.positioned {
+      margin-top: 0;
+      margin-left: 0;
+      background-color:#6cb4e2;//$Calcite_Blue_150;
+    }
+  }
+}

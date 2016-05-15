@@ -19,7 +19,12 @@
 
 {{drop-target model=dropTargetModel}}
 {{card-controls visible=controlsVisible}}
-{{card-drop-targets
-    dragMessage="Drag to new position"
-    dockLeftMessage="Split and Dock to the left"
-    dockRightMessage="Split and Dock to the right"}}
+{{card-drop-targets }}
+{{row-drop-targets }}
+{{drop-preview
+  dragMessage="Drag to new position"
+  dockLeftMessage="Split and Dock to the left"
+  dockRightMessage="Split and Dock to the right"
+  dockTopMessage="Add to top"
+  dockBottomMessage="Add to bottom"
+}}

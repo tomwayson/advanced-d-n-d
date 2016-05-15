@@ -127,11 +127,12 @@ export default Ember.Service.extend(Ember.Evented, {
     } else {
       draggingProperties.set('mousePosition', position);
     }
-    //opsdash solves the issue of showing the drop-targets by
-    //doing a hit-test against the absolutely positioned elements here
-    //that solves the problem of mouseenter / leave events not firing
-    //on the cards.
-    //see if we intersect any cards...
+
+    //---------------------
+    // HIT TESTS
+    //---------------------
+    // We intersect the mouse position against all the cards, rows and sections
+    // CARDS
     let cards = this.get('components');
     let cardFound = cards.find(function(card){
       let cp = card.get('componentPosition');
@@ -146,12 +147,12 @@ export default Ember.Service.extend(Ember.Evented, {
       this.trigger( 'showCardDropTargets',null  );
     }
 
-    //ok - handle rows...
+    //ROWS
     //this is fine because there should always be row drop-targets
     let rows = this.get('rows');
     let rowFound = rows.find(function(row){
       let cp = row.get('componentPosition');
-      //console.log('CP for ' + card.get('elementId') + ': ', cp);
+      //console.log('CP for ' + row.get('elementId') + ': ', cp);
       return position.left >= cp.left && position.left <= (cp.left + cp.width) && position.top >= cp.top && position.top <= (cp.top + cp.height);
     });
 
@@ -163,7 +164,7 @@ export default Ember.Service.extend(Ember.Evented, {
       this.trigger( 'showRowDropTargets',  null  );
     }
 
-    //sections
+    //SECTIONS
     let sections = this.get('sections');
     let sectionFound = sections.find(function(section){
       let cp = section.get('componentPosition');
@@ -179,6 +180,7 @@ export default Ember.Service.extend(Ember.Evented, {
     }else{
       this.trigger( 'showSectionDropTargets',  null  );
     }
+    //---------------------
 
   },
 
@@ -189,12 +191,13 @@ export default Ember.Service.extend(Ember.Evented, {
     console.log('   TARGET ROW :' + draggingProperties.targetRow.get('elementId'));
     console.log('   TARGET SECTION :' + draggingProperties.targetSection.get('elementId'));
     console.log('   ----------------------------');
-    console.log('   DOCK POSITION:' + draggingProperties.dockTarget);
+    console.log('   DOCK POSITION:' + draggingProperties.dockingTarget);
     console.log('   DRAGGED TYPE:' + draggingProperties.component.get('dragType'));
     console.log('   DRAGGED ACTION:' + draggingProperties.component.get('dragAction'));
     console.log('----------------------------');
     //hide the drop targets
     this.trigger('showCardDropTargets',null);
+    this.trigger('showRowDropTargets',null);
 
     //expand out of the properties into vars we can reason about
     let dragType = draggingProperties.component.get('dragType');
@@ -203,7 +206,7 @@ export default Ember.Service.extend(Ember.Evented, {
     let targetCard = draggingProperties.targetCard;
     let targetRow = draggingProperties.targetRow;
     let targetSection = draggingProperties.targetSection;
-    let dockTarget = draggingProperties.dockTarget;
+    let dockingTarget = draggingProperties.dockingTarget;
 
     //if we have a card...
     if(dragType === 'card'){
@@ -211,13 +214,13 @@ export default Ember.Service.extend(Ember.Evented, {
       if(dragAction === 'add'){
         //and we are DROPPING on a CARD-TARGET...
         if(dropTargetType === 'card'){
-          //call targetRow.insertCard(card, targetCard, dockTarget)
-          targetRow.insertCard(draggingProperties.component.get('model.defaults'), targetCard.get('model'), dockTarget);
+          //call targetRow.insertCard(card, targetCard, dockingTarget)
+          targetRow.insertCard(draggingProperties.component.get('model.defaults'), targetCard.get('model'), dockingTarget);
         }
         //and we are DROPPING on a ROW-TARGET
         if(dropTargetType === 'row'){
           //call targetSection.insertCard(card)
-          targetSection.insertCard(draggingProperties.component, targetCard, dockTarget);
+          targetSection.insertCard(draggingProperties.component, targetCard, dockingTarget);
         }
       }
       if(dragAction === 'move'){
@@ -239,12 +242,12 @@ export default Ember.Service.extend(Ember.Evented, {
             });
           });
 
-          targetRow.insertCard(clone, targetCard.get('model'), dockTarget);
+          targetRow.insertCard(clone, targetCard.get('model'), dockingTarget);
         }
         //and we are DROPPING on a ROW-TARGET
         if(dropTargetType === 'row'){
           //call targetSection.insertCard(card)
-          targetSection.insertCard(draggingProperties.component, targetCard, dockTarget);
+          targetSection.insertCard(draggingProperties.component, targetCard, dockingTarget);
         }
 
       }

@@ -1,0 +1,10 @@
+<div class="target-container" style={{targetContainerStyle}}>
+  <div class="row-drop-target top {{if (eq dockingTarget 'row-top') 'hover'}}"
+    {{action "updateDockingTarget" "row-top" true on="mouseEnter"}}
+    {{action "updateDockingTarget" on="mouseLeave"}}
+    ></div>
+  <div class="row-drop-target bottom {{if (eq dockingTarget 'row-bottom') 'hover'}}"
+    {{action "updateDockingTarget" "row-bottom" true on="mouseEnter"}}
+    {{action "updateDockingTarget" on="mouseLeave"}}
+    ></div>
+</div>

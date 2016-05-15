@@ -1,0 +1,43 @@
+.row-drop-targets{
+  .target-container{
+    display: block;
+    position: absolute;
+    outline: 1px dashed purple;
+
+    .row-drop-target {
+
+      position: absolute;
+      width: 60px;
+      height: 16px;
+      -moz-user-select: none;
+      -khtml-user-select: none;
+      -webkit-user-select: none;
+      cursor: default;
+      z-index: 580;
+      background-color: #f8f8f8;
+      background-position: 0 0;
+      margin: auto;
+      box-shadow: 0 0 20px 3px rgba(0, 0, 0, .2);
+
+      &.top,
+      &.bottom {
+        left: 0;
+        right: 0;
+      }
+      &.top {
+        top: -9px;
+        background-image: url("./images/dock-top.png");
+      }
+      &.top.hover {
+        background-image: url("./images/dock-top-sel.png");
+      }
+      &.bottom {
+        bottom: -9px;
+        background-image: url("./images/dock-bottom.png");
+      }
+      &.bottom.hover {
+        background-image: url("./images/dock-bottom-sel.png");
+      }
+    }
+  }
+}

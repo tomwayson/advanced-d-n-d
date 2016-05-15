@@ -9,8 +9,10 @@ $link-color: #555555;
 @import 'card-resizer';
 @import 'card-controls';
 @import 'card-swatch';
+@import 'drop-preview';
 @import 'section-controls';
 @import 'card-drop-targets';
+@import 'row-drop-targets';
 @import 'page-layout-editor';
 @import 'blank-card';
 // TODO: replace w/ 1 per component, or remove?
