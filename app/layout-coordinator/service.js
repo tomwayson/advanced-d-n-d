@@ -152,11 +152,7 @@ export default Ember.Service.extend(Ember.Evented, {
     //---------------------
     // We intersect the mouse position against the cards, rows and sections
     // CARDS
-    let cards = this.get('cardComponents');
-    let cardFound = cards.find(function(card){
-      let cp = card.get('componentPosition');
-      return position.left >= cp.left && position.left <= (cp.left + cp.width) && position.top >= cp.top && position.top <= (cp.top + cp.height);
-    });
+    let cardFound = this.getComponentAtPosition('card', position);
     if(cardFound !== draggingProperties.get('component')){
       //dont show drop-targets if we are dragging over the start card...
       if(this.get('draggingProperties.dragType') === 'card'){
@@ -168,14 +164,7 @@ export default Ember.Service.extend(Ember.Evented, {
     }
 
     //ROWS
-    //this is fine because there should always be row drop-targets
-    let rows = this.get('rowComponents');
-    let rowFound = rows.find(function(row){
-      let cp = row.get('componentPosition');
-      //console.log('CP for ' + row.get('elementId') + ': ', cp);
-      return position.left >= cp.left && position.left <= (cp.left + cp.width) && position.top >= cp.top && position.top <= (cp.top + cp.height);
-    });
-
+    let rowFound = this.getComponentAtPosition('row', position);
     if(rowFound){
       //console.log('Got hit for row : ' + rowFound.get('elementId'));
       if(this.get('draggingProperties.dragType') === 'card'){
@@ -187,12 +176,7 @@ export default Ember.Service.extend(Ember.Evented, {
     }
 
     //SECTIONS
-    let sections = this.get('sectionComponents');
-    let sectionFound = sections.find(function(section){
-      let cp = section.get('componentPosition');
-      return position.left >= cp.left && position.left <= (cp.left + cp.width) && position.top >= cp.top && position.top <= (cp.top + cp.height);
-    });
-
+    let sectionFound = this.getComponentAtPosition('section', position);
     if(sectionFound){
       //only show the section targets if we are dragging a section
       if(this.get('draggingProperties.dragType') === 'section'){
