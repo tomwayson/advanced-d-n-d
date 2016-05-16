@@ -188,11 +188,11 @@ export default Ember.Component.extend({
       this.removeCard(card, row);
     },
     removeSection() {
-      console.log('Section:Remove Event Fired')
+      console.log('Section:Remove Event Fired');
       this.sendAction('onRemoveSection', this.get('model'));
     },
     editSection() {
-      console.log('Section:Edit Event Fired')
+      console.log('Section:Edit Event Fired');
       this.sendAction('onEditSection', this.get('model'));
     }
   }

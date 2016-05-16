@@ -87,7 +87,7 @@ export default Ember.Service.extend(Ember.Evented, {
     }
   },
 
-  mouseUp(event){
+  mouseUp(/*event*/){
     //if we have draggingProperties... we may need to take some action
     if(this.get('draggingProperties')){
       let dp  = this.get('draggingProperties');
@@ -108,13 +108,29 @@ export default Ember.Service.extend(Ember.Evented, {
     this.set('draggingProperties.dragAction', this.get('draggingProperties.component.dragAction'));
 
     //clear any current mouseHandlers
-    this.clearMouseHandlers();
+    //this.clearMouseHandlers();
     //setup our own mouse handlers
     this.setMouseHandlers( Ember.run.bind(this, this.mouseMove), Ember.run.bind(this, this.mouseUp) );
     //update our dragging
     this.updateDragging();
   },
 
+  /**
+   * Generic fn to locate components in the various collections
+   * based on a position
+   */
+  getComponentAtPosition(type, position){
+    let collection = this.get(type+'Components');
+    let found = collection.find(function(itm){
+      let cp = itm.get('componentPosition');
+      return position.left >= cp.left && position.left <= (cp.left + cp.width) && position.top >= cp.top && position.top <= (cp.top + cp.height);
+    });
+    return found;
+  },
+
+  /**
+   * All the mechanics of interactions when dragging are managed in here
+   */
   updateDragging: function (position) {
     let draggingProperties = this.get('draggingProperties');
     if (!draggingProperties && !position) {
@@ -136,11 +152,7 @@ export default Ember.Service.extend(Ember.Evented, {
     //---------------------
     // We intersect the mouse position against the cards, rows and sections
     // CARDS
-    let cards = this.get('cardComponents');
-    let cardFound = cards.find(function(card){
-      let cp = card.get('componentPosition');
-      return position.left >= cp.left && position.left <= (cp.left + cp.width) && position.top >= cp.top && position.top <= (cp.top + cp.height);
-    });
+    let cardFound = this.getComponentAtPosition('card', position);
     if(cardFound !== draggingProperties.get('component')){
       //dont show drop-targets if we are dragging over the start card...
       if(this.get('draggingProperties.dragType') === 'card'){
@@ -152,14 +164,7 @@ export default Ember.Service.extend(Ember.Evented, {
     }
 
     //ROWS
-    //this is fine because there should always be row drop-targets
-    let rows = this.get('rowComponents');
-    let rowFound = rows.find(function(row){
-      let cp = row.get('componentPosition');
-      //console.log('CP for ' + row.get('elementId') + ': ', cp);
-      return position.left >= cp.left && position.left <= (cp.left + cp.width) && position.top >= cp.top && position.top <= (cp.top + cp.height);
-    });
-
+    let rowFound = this.getComponentAtPosition('row', position);
     if(rowFound){
       //console.log('Got hit for row : ' + rowFound.get('elementId'));
       if(this.get('draggingProperties.dragType') === 'card'){
@@ -171,12 +176,7 @@ export default Ember.Service.extend(Ember.Evented, {
     }
 
     //SECTIONS
-    let sections = this.get('sectionComponents');
-    let sectionFound = sections.find(function(section){
-      let cp = section.get('componentPosition');
-      return position.left >= cp.left && position.left <= (cp.left + cp.width) && position.top >= cp.top && position.top <= (cp.top + cp.height);
-    });
-
+    let sectionFound = this.getComponentAtPosition('section', position);
     if(sectionFound){
       //only show the section targets if we are dragging a section
       if(this.get('draggingProperties.dragType') === 'section'){
@@ -286,6 +286,8 @@ export default Ember.Service.extend(Ember.Evented, {
 
     //nuke the draggingProperties
     this.set('draggingProperties', null);
+    //turn off our main mousehanderls
+    this.clearMouseHandlers(Ember.run.bind(this, this.mouseMove), Ember.run.bind(this, this.mouseUp));
   }
 
 });
