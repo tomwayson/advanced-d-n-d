@@ -1,4 +1,3 @@
-
 {{#if hasSections}}
   {{#each model.sections as |section|}}
     {{layout-section-editor model=section
@@ -19,6 +18,9 @@
 
 {{drop-target model=dropTargetModel}}
 {{card-controls visible=controlsVisible}}
+{{section-controls
+  onEditSection=(action 'onEditSection')
+  onRemoveSection=(action 'onRemoveSection')}}
 {{card-drop-targets }}
 {{row-drop-targets }}
 {{drop-preview

@@ -10,7 +10,7 @@ export default Ember.Component.extend({
   layoutCoordinator: Ember.inject.service('layout-coordinator'),
   invisible: Ember.computed.not('visible'),
   componentPosition:null,
-  cardComponent:null,
+  sectionComponent:null,
   style:'',
 
   init(){
@@ -28,10 +28,6 @@ export default Ember.Component.extend({
     if(cardComponent){
       this.set('cardComponent', cardComponent);
     }
-    //console.log('card-controls caught showControls event ', cardComponent.get('elementId'));
-    // if(!componentPosition){
-    //   return;
-    // }
     this.updateStyle( cardComponent.get('componentPosition') );
     this.set('invisible', false);
   },

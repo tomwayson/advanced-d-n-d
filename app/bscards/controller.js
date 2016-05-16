@@ -14,6 +14,7 @@ export default Ember.Controller.extend({
       {
         text:'DEBUG',
         dragType:'card',
+        dragAction:'add',
         defaults: {
           "component": {
             "name": "debug-card"
@@ -23,6 +24,7 @@ export default Ember.Controller.extend({
       {
         text:'PLACEHOLDER',
         dragType:'card',
+        dragAction:'add',
         defaults: {
           "component": {
             "name": "placeholder-card"
@@ -31,7 +33,11 @@ export default Ember.Controller.extend({
       },
       {
         text:'Add Section',
-        dragType:'section'
+        dragType:'section',
+        dragAction:'add',
+        defaults: {
+          "rows": []
+        }
       }
     ];
   }),

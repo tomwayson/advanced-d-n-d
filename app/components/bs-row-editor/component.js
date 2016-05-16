@@ -24,12 +24,6 @@ export default Ember.Component.extend({
     this.set('layoutCoordinator.rows', this.get('layoutCoordinator.rows').without(this));
   },
 
-
-  // mouseLeave(/*event*/){
-  //   //when the mouse leaves this component, we should hide resizers
-  //   this._updateCardResizer({visible:false});
-  // },
-
   /**
    * Component Position
    * ,top,bottom,right,left,height,width of this component

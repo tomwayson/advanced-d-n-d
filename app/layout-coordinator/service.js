@@ -31,7 +31,7 @@ export default Ember.Service.extend(Ember.Evented, {
    * the intent is to DRAG vs just a sloppy click
    */
   checkDrag(event, component){
-    console.log('card-swatch:mouseDown...');
+
     if (this.get('disableEvents')){
       return;
     }
@@ -95,8 +95,6 @@ export default Ember.Service.extend(Ember.Evented, {
     if(this.get('draggingProperties')){
       let dp  = this.get('draggingProperties');
       this.handleDrop(dp);
-      //console.log('layoutCoordinator internal mouseup');
-
       Ember.$('body').toggleClass('disable-user-select');
     }
   },
@@ -108,6 +106,9 @@ export default Ember.Service.extend(Ember.Evented, {
     this.setProperties({
       draggingProperties: Ember.Object.create(draggingProperties)
     });
+    //TODO: refactor so we don't need to do this arbitrary copying of properties
+    this.set('draggingProperties.dragType', this.get('draggingProperties.component.dragType'));
+    this.set('draggingProperties.dragAction', this.get('draggingProperties.component.dragAction'));
     //clear any current mouseHandlers
     this.clearMouseHandlers();
     //setup our own mouse handlers
@@ -141,7 +142,9 @@ export default Ember.Service.extend(Ember.Evented, {
     });
     if(cardFound){
       //console.log('Got hit for card : ' + cardFound.get('elementId'));
-      this.trigger( 'showCardDropTargets' , cardFound );
+      if(this.get('draggingProperties.dragType') === 'card'){
+        this.trigger( 'showCardDropTargets' , cardFound );
+      }
       this.set('draggingProperties.targetCard', cardFound);
     }else{
       this.trigger( 'showCardDropTargets',null  );
@@ -158,7 +161,9 @@ export default Ember.Service.extend(Ember.Evented, {
 
     if(rowFound){
       //console.log('Got hit for row : ' + rowFound.get('elementId'));
-      this.trigger( 'showRowDropTargets' , rowFound );
+      if(this.get('draggingProperties.dragType') === 'card'){
+        this.trigger( 'showRowDropTargets' , rowFound );
+      }
       this.set('draggingProperties.targetRow', rowFound);
     }else{
       this.trigger( 'showRowDropTargets',  null  );
@@ -174,7 +179,7 @@ export default Ember.Service.extend(Ember.Evented, {
     if(sectionFound){
       //only show the section targets if we are dragging a section
       if(this.get('draggingProperties.dragType') === 'section'){
-        this.trigger( 'showSectionDropTargets' , rowFound );
+        this.trigger( 'showRowDropTargets' , sectionFound );
       }
       this.set('draggingProperties.targetSection', sectionFound);
     }else{
@@ -249,20 +254,35 @@ export default Ember.Service.extend(Ember.Evented, {
           //call targetSection.insertCard(card)
           targetSection.insertCard(draggingProperties.component, targetCard, dockingTarget);
         }
-
       }
-
-    }
+    }//dragType===card
 
     // Sections are managed at the PAGE-LAYOUT-EDITOR level
-
     //if we have a section...
-    //  if ACTION is ADD
-    //    and we are DROPPING on a SECTION-TARGET...
-    //      call layout.insertSection(section, )
-    //  if ACTION is MOVE
-    //    and we are DROPPING on a SECTION-TARGET...
-    //      call
+    if(dragType === 'section'){
+      //we need to get the section that is the target
+      let sections = this.get('sections');
+      sections.forEach(function(sectionComponent){
+        let sectionModel = sectionComponent.get('model');
+        sectionModel.rows.forEach(function(rowModel){
+          //find the row that contained the card...
+          if(rowModel.cards.indexOf(draggingProperties.component.get('model')) > -1){
+            targetSection.removeCard(draggingProperties.component.get('model'), rowModel);
+          }
+        });
+      });
+
+      if(dragAction === 'add'){
+        this.get('layoutEditor').insertSection(draggingProperties.component.get('model.defaults'), targetSection.get('model'), dockingTarget);
+      }
+      if(dragAction ==='move'){
+        //make a clone
+        let clone = Ember.copy(draggingProperties.component.get('model'), true);
+        this.set('layoutEditor.model.sections',this.get('layoutEditor.model.sections').without(draggingProperties.component.get('model')));
+        //now inject the clone at the correct location
+        this.get('layoutEditor').insertSection(clone, targetSection.get('model'), dockingTarget);
+      }
+    }
 
     //nuke the draggingProperties
     this.set('draggingProperties', null);

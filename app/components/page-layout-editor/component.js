@@ -22,93 +22,15 @@ export default Ember.Component.extend({
 
   init(){
     this._super(...arguments);
-    //event handler to listen to layoutCoordinator
-    //Ember.$('body').on('mousemove', Ember.run.bind(this, this.bodyMouseMove));
-    this.get('layoutCoordinator').on('showDropTarget', this, 'onShowDropTarget');
-    this.get('layoutCoordinator').on('hideDropTarget', this, 'onHideDropTarget');
+    //add this to the layoutCoordinatior
+    this.set('layoutCoordinator.layoutEditor', this);
   },
-
   willDestroyElement(){
-    //Ember.$('body').off('mousemove', Ember.run.bind(this, this.bodyMouseMove));
-    this.get('layoutCoordinator').off('showDropTarget', this, 'onShowDropTarget');
-    this.get('layoutCoordinator').off('hideDropTarget', this, 'onHideDropTarget');
+    this.set('layoutCoordinator.layoutEditor', null);
   },
 
-  /**
-   * Drop-Target is a shared control across the entire
-   * page-layout. It's used to show the location of a
-   * drop target. By using a shared element, we can
-   * only have one active at a time.
-   */
-  onShowDropTarget(dropTargetModel){
-    this.set('dropTargetModel', dropTargetModel);
-    this.$('.drop-target').css({display:'block'});
-  },
 
-  /**
-   * Simply hide the Drop-Target
-   */
-  onHideDropTarget(){
-    this.$('.drop-target').css({display:'none'});
-  },
-
-  // dragEnter(event){
-  //   let td = this.get('layoutCoordinator.transferData');
-  //
-  //   // only if dragged object is a section
-  //   if(!td || td.objectType !=='section') {
-  //     return;
-  //   }
-  //   console.info('PAGE-LAYOUT-EDITOR VALID DROP TARGET FOR ' + td.objectType);
-  //   event.preventDefault();
-  //
-  //   // TODO: what to do w/ dragged section
-  // },
-  //
-  // dragOver(event){
-  //   //can accept a section
-  //   let td = this.get('layoutCoordinator.transferData');
-  //
-  //   // only if dragged object is a section
-  //   if(!td || td.objectType !=='section') {
-  //     return;
-  //   }
-  //
-  //   // user is draggini sections, we'll handle this
-  //   event.preventDefault();
-  // },
-  //
-  // dragLeave(){
-  //   this.get('layoutCoordinator').trigger('hideDropTarget');
-  // },
-  //
-  // drop(/*event*/){
-  //   let td = this.get('layoutCoordinator.transferData');
-  //   // only if dragged object is a section
-  //   if(!td || td.objectType !=='section') {
-  //     return;
-  //   }
-  //   console.info('DROP ON PAGE-LAYOUT-EDITOR ' + this.get('elementId') + ' for ' + td.objectType);
-  //
-  //   // we're droppin' sections
-  //   // get the section from the event bus
-  //   let newSection = td.model;
-  //   // if we're moving a section, need to first
-  //   // remove it from the page
-  //   if (td.dragType === 'move') {
-  //     this._removeSection(newSection);
-  //   }
-  //
-  //   // insert the section
-  //   this._insertSection(newSection, td.dropSectionInfo.section, td.dropSectionInfo.insertAfter);
-  //
-  //   // clear event bus drag/drop info
-  //   // and hide drop target
-  //   this.set('layoutCoordinator.transferData', null);
-  //   this.get('layoutCoordinator').trigger('hideDropTarget');
-  // },
-
-  _insertSection(section, targetSection, insertAfter) {
+  insertSection(section, targetSection, dockPosition) {
     const sections = this.get('model.sections');
     // where to insert?
     // default to the begining (left)
@@ -116,7 +38,10 @@ export default Ember.Component.extend({
     if (targetSection) {
       // if inserting before, use target card's current index
       // otherwise (inserting after) use the next index
-      pos = sections.indexOf(targetSection) + (insertAfter ? 1 : 0);
+      pos = sections.indexOf(targetSection);
+      if(dockPosition ==='bottom'){
+        pos++;
+      }
     }
     sections.insertAt(pos, section);
   },
@@ -127,27 +52,19 @@ export default Ember.Component.extend({
   },
 
   actions: {
-    onRowDrop(e, row) {
-      this.sendAction('onDrop', e, row, this.get('moveRow'));
-      this.set('moveRow', null);
-    },
-    onStartMove(e, row) {
-      this.set('moveRow', row);
-    },
-    onRemoveSection(section){
-      console.info('PAGE-LAYOUT-EDITOR onRemoveSection');
-      this._removeSection(section);
-    }
-
-    // onRowDragEnter(row) {
-    //   this.set('dragOverRow', row);
-    //   // console.log('entered row', row.message);
+    // onRowDrop(e, row) {
+    //   this.sendAction('onDrop', e, row, this.get('moveRow'));
+    //   this.set('moveRow', null);
     // },
-    // onRowDragLeave(row) {
-    //   if (this.get('dragOverRow') === row) {
-    //     this.set('dragOverRow', null);
-    //   }
-    //   // console.log('leaving row', row.message);
-    // }
+    // onStartMove(e, row) {
+    //   this.set('moveRow', row);
+    // },
+    onRemoveSection(sectionModel){
+      console.info('PAGE-LAYOUT-EDITOR onRemoveSection');
+      this._removeSection(sectionModel);
+    },
+    onEditSection(sectionModel){
+      console.info('PAGE-LAYOUT-EDITOR onEditSection');
+    }
   }
 });

@@ -11,7 +11,7 @@ export default Ember.Component.extend({
   targetContainerStyle:'',
   hasDockingTarget: Ember.computed.notEmpty('layoutCoordinator.draggingProperties.dockingTarget'),
   dockingTarget: Ember.computed.alias('layoutCoordinator.draggingProperties.dockingTarget'),
-  //draggingPosition: Ember.computed.alias('layoutCoordinator.draggingProperties.mousePosition'),
+
   dockMessage: '',
 
   init(){
