@@ -35,12 +35,14 @@ export default Ember.Component.extend({
 
 
   mouseEnter(/*event*/){
+    //console.log('bs-card-editor mouseEnter...');
     if(!this.get('layoutCoordinator.draggingProperties')){
       this.get('layoutCoordinator').trigger( 'showControls' , this );
     }
   },
 
   mouseLeave(event){
+    //console.log('bs-card-editor mouseleave...');
     //check if the mouse is still within the card...
     //get the x,y from the event
     let mousePos = {
@@ -60,6 +62,7 @@ export default Ember.Component.extend({
   },
 
   mouseMove(event){
+    //console.log('bs-card-editor mouseMove...');
     //if we don't have a drag operation underway...
     if(!this.get('layoutCoordinator.draggingProperties')){
       //we determine if we are close enough to show the resizer
@@ -69,34 +72,23 @@ export default Ember.Component.extend({
         y: event.clientY + window.pageYOffset
       };
       let componentPosition = this.get('componentPosition');
-      let resizerProximity = 30;
-      let resizerVisible = false;
-      let edge = '';
+      let resizerProximity = 50;
+      let resizerOptions = null;
       //check if we are close to a resizable edge
       if(mousePos.y > (componentPosition.top + 50) && mousePos.y < (componentPosition.bottom - 50)){
-
+        //Left-edge
         if(mousePos.x > componentPosition.left && mousePos.x < (componentPosition.left + resizerProximity)){
-          //send event info up to the bs-row-editor which actually handles showing the resizer
-          this.sendAction('onShowCardResize', this.get('model'), 'left', componentPosition);
-          edge = 'left';
-          resizerVisible = true;
+          resizerOptions = {edge:'left', component: this};
         }
-
+        //Right-edge
         if(mousePos.x < componentPosition.right && mousePos.x > (componentPosition.right - resizerProximity)){
-          //send event info up
-          this.sendAction('onShowCardResize', this.get('model'), 'right', componentPosition);
-          edge = 'right';
-          resizerVisible = true;
+          resizerOptions = {edge:'right', component: this};
         }
       }
-      //console.log('BS-CARD-EDITOR:mouseMove canResize: ' + resizerVisible);
-
-      this.sendAction('onUpdateCardResizer', {
-        card: this.get('model'),
-        visible: resizerVisible,
-        edge: edge,
-        cardPosition: componentPosition
-      });
+      this.get('layoutCoordinator').trigger('showCardResizer', resizerOptions );
+    }else{
+      //TODO: Do we need to hide it?
+      console.log('bs-card-editor layoutCoordinator.draggingProperties is not null...');
     }
   },
 

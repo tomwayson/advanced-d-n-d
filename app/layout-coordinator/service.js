@@ -87,7 +87,7 @@ export default Ember.Service.extend(Ember.Evented, {
     }
   },
 
-  mouseUp(event){
+  mouseUp(/*event*/){
     //if we have draggingProperties... we may need to take some action
     if(this.get('draggingProperties')){
       let dp  = this.get('draggingProperties');
@@ -108,13 +108,29 @@ export default Ember.Service.extend(Ember.Evented, {
     this.set('draggingProperties.dragAction', this.get('draggingProperties.component.dragAction'));
 
     //clear any current mouseHandlers
-    this.clearMouseHandlers();
+    //this.clearMouseHandlers();
     //setup our own mouse handlers
     this.setMouseHandlers( Ember.run.bind(this, this.mouseMove), Ember.run.bind(this, this.mouseUp) );
     //update our dragging
     this.updateDragging();
   },
 
+  /**
+   * Generic fn to locate components in the various collections
+   * based on a position
+   */
+  getComponentAtPosition(type, position){
+    let collection = this.get(type+'Components');
+    let found = collection.find(function(itm){
+      let cp = itm.get('componentPosition');
+      return position.left >= cp.left && position.left <= (cp.left + cp.width) && position.top >= cp.top && position.top <= (cp.top + cp.height);
+    });
+    return found;
+  },
+
+  /**
+   * All the mechanics of interactions when dragging are managed in here
+   */
   updateDragging: function (position) {
     let draggingProperties = this.get('draggingProperties');
     if (!draggingProperties && !position) {
@@ -286,6 +302,8 @@ export default Ember.Service.extend(Ember.Evented, {
 
     //nuke the draggingProperties
     this.set('draggingProperties', null);
+    //turn off our main mousehanderls
+    this.clearMouseHandlers(Ember.run.bind(this, this.mouseMove), Ember.run.bind(this, this.mouseUp));
   }
 
 });

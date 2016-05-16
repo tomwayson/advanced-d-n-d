@@ -1,7 +1,4 @@
 {{#each model.cards as |card|}}
   {{bs-card-editor model=card
-                  onUpdateCardResizer=(action 'onUpdateCardResizer' )
                   onCardRemove=(action 'onCardRemove')}}
 {{/each}}
-{{card-resizer model=resizerModel
-                 onShift=(action 'onShiftSharedEdge')}}
