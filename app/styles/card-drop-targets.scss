@@ -1,0 +1,56 @@
+.card-drop-targets {
+  .target-container{
+    display: block;
+    position: absolute;
+    // outline: 1px dashed purple;
+
+    .card-drop-target {
+
+      position: absolute;
+      width: 32px;
+      height: 32px;
+      -moz-user-select: none;
+      -khtml-user-select: none;
+      -webkit-user-select: none;
+      cursor: default;
+      z-index: 580;
+      background-color: #f8f8f8;
+      background-position: 0 0;
+      margin: auto;
+      box-shadow: 0 0 20px 3px rgba(0, 0, 0, .2);
+
+      &.left,
+      &.right {
+        top: 0;
+        bottom: 0;
+      }
+      &.left {
+        left: 15px;
+        background-image: url("./images/dock_left.png");
+      }
+      &.left.hover {
+        background-image: url("./images/dock_left_sel.png");
+      }
+      &.right {
+        right: 15px;
+        background-image: url("./images/dock_right.png");
+      }
+      &.right.hover {
+        background-image: url("./images/dock_right_sel.png");
+      }
+    }
+  }
+
+}
+.table-container {
+  display: table;
+  height: 100%;
+  width: 100%;
+}
+.table-container-cell {
+  display: table-cell;
+  height: 100%;
+  &.middle {
+    vertical-align: middle;
+  }
+}

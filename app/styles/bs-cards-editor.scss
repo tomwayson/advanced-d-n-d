@@ -1,9 +1,14 @@
 section {
   .card-editor {
-    outline: 1px solid #eee;
-    
+
+
+
   }
-  .card-editor:hover {
-    outline: 1px dashed #CCC;
+  .highlight {
+    // z-index: 490;
+    outline: 5px solid rgba(86, 165, 216, 0.5);
   }
+  // .card-editor:hover {
+  //   outline: 1px dashed #CCC;
+  // }
 }

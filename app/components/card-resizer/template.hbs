@@ -1,12 +1,12 @@
 <div class="control-container" style={{controlContainerStyle}}>
   {{#if model.showLeftSizer}}
-  <button class="resize-left btn btn-xs">
+  <div class="resize-left boxed">
     <span class="glyphicon glyphicon-arrow-left" {{ action "shiftLeft"}}></span>
-  </button>
+  </div>
   {{/if}}
   {{#if model.showRightSizer}}
-  <button class="resize-right btn btn-xs" {{ action "shiftRight"}}>
+  <div class="resize-right boxed" {{ action "shiftRight"}}>
     <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span>
-  </button>
+  </div>
   {{/if}}
 </div>

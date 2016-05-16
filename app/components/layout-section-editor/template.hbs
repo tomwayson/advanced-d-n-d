@@ -1,11 +1,4 @@
 <div class="{{containerClass}}" >
-  <div class="section-controls">
-    {{#draggable-object dragType="move" objectType="section" model=model }}
-      <span class="glyphicon glyphicon-move card-editor-drag-handle"></span>
-    {{/draggable-object}}
-    <a href="#" {{action "editSection"}}><span class="glyphicon glyphicon-cog"/></a>
-    <a href="#" {{action "removeSection"}}><span class="glyphicon glyphicon-remove"/></a>
-  </div>
   {{#if hasRows}}
     {{#each model.rows as |row|}}
       {{bs-row-editor model=row
@@ -17,6 +10,7 @@
   <div class="row">
     <div class="col-md-12">
       <h2>Hey No Cards! Drop something here!</h2>
+      <p>(Replace with a component for showing "empty" state)</p>
     </div>
   </div>
   {{/if}}

@@ -19,10 +19,9 @@
 </div>
 
 <div id="dockPanel">
-  {{#draggable-object objectType='card' onDragStart=(action 'onCardDragStart' 'placeholder')}}DEBUG CARD{{/draggable-object}}
-  {{#draggable-object objectType='card' onDragStart=(action 'onCardDragStart' 'blank')}}BLANK CARD{{/draggable-object}}
-  {{#draggable-object objectType='section' onDragStart=(action 'onSectionDragStart')}}SECT{{/draggable-object}}
+  {{#each swatches as |swatch|}}
+    {{#card-swatch model=swatch}}{{swatch.text}}{{/card-swatch}}
+  {{/each}}
 </div>
-<div class="crack"></div>
 
 {{page-layout-editor model=model}}

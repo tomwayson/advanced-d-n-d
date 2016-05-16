@@ -1,3 +1,6 @@
-.section-controls {
-  float: right;
+.layout-section-editor{
+  &.highlight {
+    // z-index: 490;
+    outline: 5px solid rgba(86, 165, 216, 0.5);
+  }
 }

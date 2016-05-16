@@ -1,0 +1,10 @@
+<div class="target-container" style={{targetContainerStyle}}>
+  <div class="card-drop-target left {{if (eq dockingTarget 'card-left') 'hover'}}"
+    {{action "updateDockingTarget" "card-left" true on="mouseEnter"}}
+    {{action "updateDockingTarget" on="mouseLeave"}}
+    ></div>
+  <div class="card-drop-target right {{if (eq dockingTarget 'card-right') 'hover'}}"
+    {{action "updateDockingTarget" "card-right" true on="mouseEnter"}}
+    {{action "updateDockingTarget" on="mouseLeave"}}
+    ></div>
+</div>

@@ -1,13 +1,26 @@
+/**
+ * layout-section-editor/component.js
+ */
 import Ember from 'ember';
 
 export default Ember.Component.extend({
   tagName:'section',
   classNames:['layout-section-editor'],
-
+  classNameBindings:['highlight'],
+  highlight:false,
+  dragType:'section',
+  dragAction:'move',  //always a move
   hasRows: Ember.computed('model.rows.length', function(){
     return this.get('model.rows.length');
   }),
-
+  init(){
+    this._super(...arguments);
+    this.get('layoutCoordinator').sectionComponents.push(this);
+  },
+  willDestroyElement(){
+    //remove the component from the hash
+    this.set('layoutCoordinator.sectionComponents', this.get('layoutCoordinator.sectionComponents').without(this));
+  },
   /**
    * Component Position
    * ,top,bottom,right,left,height,width of this component
@@ -16,6 +29,33 @@ export default Ember.Component.extend({
   componentPosition: Ember.computed('model', function(){
     return this.getComponentPosition();
   }).volatile(),
+
+
+  mouseEnter(/*event*/){
+    if(!this.get('layoutCoordinator.draggingProperties')){
+      this.get('layoutCoordinator').trigger( 'showSectionControls' , this );
+    }
+  },
+
+  mouseLeave(event){
+    //check if the mouse is still within the card...
+    //get the x,y from the event
+    let mousePos = {
+      x: event.originalEvent.clientX + window.pageXOffset,
+      y: event.originalEvent.clientY + window.pageYOffset
+    };
+    let cp = this.get('componentPosition');
+
+    if(mousePos.x >= cp.left && mousePos.x <= cp.right &&
+       mousePos.y >= cp.top  && mousePos.y <= cp.bottom){
+      //still inside
+    }else{
+      if(!this.get('layoutCoordinator.draggingProperties')){
+        this.get('layoutCoordinator').trigger( 'showSectionControls'  );
+      }
+    }
+  },
+
 
   /**
    * Actually get the component position from the DOM
@@ -28,28 +68,51 @@ export default Ember.Component.extend({
     let rect = componentElement.getBoundingClientRect();
     //create a json object that accounts for scroll position
     let cp = {
-      top: rect.top + window.scrollY,
-      left: rect.left + window.scrollX,
-      bottom: rect.bottom + window.scrollY,
-      right: rect.right + window.scrollX,
+      top: rect.top + window.pageYOffset,
+      left: rect.left + window.pageXOffset,
+      bottom: rect.bottom + window.pageYOffset,
+      right: rect.right + window.pageXOffset,
       width: rect.width,
       height: rect.height
     };
     return cp;
   },
 
+  insertCardIntoNewRow(card, targetRowModel, dockingTarget){
+    //first card in a new row is always 12 wide
+    Ember.set(card, 'width', 12);
+
+    const rows = this.get('model.rows');
+    // where to insert?
+    // default to the begining (left)
+    let pos = 0;
+    if (targetRowModel) {
+      // if inserting before, use target card's current index
+      // otherwise (inserting after) use the next index
+      pos = rows.indexOf(targetRowModel);
+      if(dockingTarget === 'row-bottom'){
+        pos++;
+      }
+    }
+    //we need to cook a row model
+    let row = {
+      cards:[card]
+    };
+    rows.insertAt(pos, row);
+  },
+
   /**
    * Centralized Handling of Card Removal
    */
-  _removeCard(cardToRemove, row) {
+  removeCard(cardToRemove, row) {
     let cards= row.cards;
     //Scenarios:
     //  Row has one card, and we are deleting it
     //    - delete the row
     if(cards.length === 1){
-      console.log('LAYOUT-SECTION-EDITOR:_removeCard - removing last card in row...');
+      console.log('LAYOUT-SECTION-EDITOR:removeCard - removing last card in row...');
       Ember.set(row, 'cards',[]);
-      this._removeRow(row);
+      this.removeRow(row);
     }else{
 
     //  Row has > 1 card to the right of card we are deleting
@@ -84,7 +147,7 @@ export default Ember.Component.extend({
   /**
    * Centralized Handling of Row Removal
    */
-  _removeRow(row){
+  removeRow(row){
     //avoid model churn by checking if this actually has the row in it
     let rowIdx = this.get('model.rows').indexOf(row);
     if(rowIdx >= 0){
@@ -115,135 +178,21 @@ export default Ember.Component.extend({
    */
   layoutCoordinator: Ember.inject.service('layout-coordinator'),
 
-  dragEnter(event){
-    let td = this.get('layoutCoordinator.transferData');
 
-    // only if dragged object is a section or adding a row
-    if(!td || (td.objectType !=='section' && td.action !== 'add-row')) {
-      return;
-    }
-
-    // we'll handle this
-    event.preventDefault();
-  },
-  dragLeave(){
-    this.get('layoutCoordinator').trigger('hideDropTarget');
-  },
-  dragOver(event){
-    let td = this.get('layoutCoordinator.transferData');
-
-    // only if dragged object is a section or adding a row
-    if(!td) {
-      return;
-    }
-
-    if (td.objectType === 'section') {
-      // we'll handle this
-      event.preventDefault();
-
-      // user is dragging sections
-      //get the x,y from the event
-      let mousePos = {
-        x: event.originalEvent.clientX + window.scrollX,
-        y: event.originalEvent.clientY + window.scrollY
-      };
-
-      //get the card rectangle
-      let componentPosition = this.get('componentPosition');
-      let proximity = componentPosition.height / 4;
-      let insertAfter = false;
-      let transferAction = td.action;
-      let dropTargetModel = null;
-
-      //Close to the top
-      if(mousePos.y > componentPosition.top && mousePos.y < (componentPosition.top + proximity) ){
-
-        dropTargetModel = {
-          "top":componentPosition.top - 10,
-          "left":componentPosition.left + 10,
-          "height":4,
-          "width":componentPosition.width - 20
-        };
-        insertAfter = false;
-        console.log('PAGE-LAYOUT-EDITOR: Add section ABOVE with card' );
-        transferAction = td.dragType + '-section';
-      }
-
-      //Close to the bottom
-      if(mousePos.y > (componentPosition.bottom - proximity) && mousePos.y < (componentPosition.bottom) ){
-
-        dropTargetModel = {
-          "top":componentPosition.bottom + 6,
-          "left":componentPosition.left + 10,
-          "height":4,
-          "width":componentPosition.width - 20
-        };
-        insertAfter = true;
-        console.log('PAGE-LAYOUT-EDITOR: Add section BELOW with card' );
-        transferAction = td.dragType + '-section';
-      }
-
-      if(dropTargetModel){
-        this.get('layoutCoordinator').trigger('showDropTarget', dropTargetModel);
-      }
-      this.set('layoutCoordinator.transferData.action', transferAction);
-      this.set('layoutCoordinator.transferData.dropSectionInfo', {
-        section: this.get('model'),
-        insertAfter:insertAfter
-      });
-
-    } else {
-      if (!this.get('hasRows')) {
-        // dragging over section w/o rows, we'll handle this
-        event.preventDefault();
-        // want to add row if dropped here
-        this.set('layoutCoordinator.transferData.action', 'add-row');
-      }
-    }
-  },
-  drop(event){
-    let td = this.get('layoutCoordinator.transferData');
-    if(!td){
-      return;
-    }
-    console.info('DROP ON SECTION for ' + td.objectType + ' and  Action: ' + td.action);
-
-    //can accept an add-row action
-    if(td.action === 'add-row'){
-      event.preventDefault();
-      // create a row object with a single, full width card
-      let newCard = td.model;
-      // if we're moving a card, need to first
-      // remove it from it's original row
-      if (td.dragType === 'move') {
-        this._removeCard(newCard, td.draggedFromRow);
-        // TODO: clear event bus reference to draggedFromRow?
-      }
-      Ember.set(newCard, 'width', 12);
-      let row = {
-        cards:[newCard]
-      };
-      //figure out the position to inject it...
-      let pos = 0;
-      if(td.dropRowInfo && td.dropRowInfo.row){
-        pos = this.get('model.rows').indexOf(td.dropRowInfo.row) + (td.dropRowInfo.insertAfter ? 1:0);
-      }
-      this.get('model.rows').insertAt(pos, row);
-      this.set('layoutCoordinator.transferData', null);
-    }
-  },
 
   actions: {
     onRowRemove( row ){
-      this._removeRow(row);
+      this.removeRow(row);
     },
     onCardRemove(card, row) {
-      this._removeCard(card, row);
+      this.removeCard(card, row);
     },
     removeSection() {
+      console.log('Section:Remove Event Fired')
       this.sendAction('onRemoveSection', this.get('model'));
     },
     editSection() {
+      console.log('Section:Edit Event Fired')
       this.sendAction('onEditSection', this.get('model'));
     }
   }
