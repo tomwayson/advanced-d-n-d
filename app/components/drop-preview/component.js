@@ -33,23 +33,21 @@ export default Ember.Component.extend({
     let styleString = Ember.String.htmlSafe('display:none;');
     let dockTarget = this.get('dockingTarget');
 
+    //if we have a dropTarget, then we transform
+    //the .preview to show where the element will drop
     if(dockTarget){
-      //we are dragging, so set the style to be the drag box
 
-      //Clear the target component on the draggingProperties
+      //set the target on the draggingProperties
       if(this.get('layoutCoordinator.draggingProperties')){
         this.set('layoutCoordinator.draggingProperties.dockTarget', dockTarget);
-        this.set('layoutCoordinator.draggingProperties.dropTargetType', 'card');
       }
-      //if we are over a drop-target, then we transform
-      //the .preview to show where the element will drop
-      let pos, top,left,height,width;
 
-      console.log('dockingTarget: ' + dockTarget);
+      let pos, top,left,height,width;
 
       switch(dockTarget){
         case 'card-right':
           this.set('dockMessage', this.get('dockRightMessage'));
+          this.set('layoutCoordinator.draggingProperties.dropTargetType', 'card');
           pos = this.get('layoutCoordinator.draggingProperties.targetCard.componentPosition');
           top=pos.top;
           height=pos.height;
@@ -59,6 +57,7 @@ export default Ember.Component.extend({
 
         case 'card-left':
           this.set('dockMessage', this.get('dockLeftMessage'));
+          this.set('layoutCoordinator.draggingProperties.dropTargetType', 'card');
           pos = this.get('layoutCoordinator.draggingProperties.targetCard.componentPosition');
           top=pos.top;
           height=pos.height;
@@ -68,6 +67,7 @@ export default Ember.Component.extend({
 
         case 'row-top':
           this.set('dockMessage', this.get('dockTopMessage'));
+          this.set('layoutCoordinator.draggingProperties.dropTargetType', 'row');
           pos = this.get('layoutCoordinator.draggingProperties.targetRow.componentPosition');
           top=pos.top;
           height = pos.height / 2;
@@ -77,6 +77,7 @@ export default Ember.Component.extend({
 
         case 'row-bottom':
           this.set('dockMessage', this.get('dockBottomMessage'));
+          this.set('layoutCoordinator.draggingProperties.dropTargetType', 'row');
           pos = this.get('layoutCoordinator.draggingProperties.targetRow.componentPosition');
           height = pos.height / 2;
           top = pos.bottom - height;
@@ -86,8 +87,6 @@ export default Ember.Component.extend({
       }
 
       styleString = Ember.String.htmlSafe(`top:${top}px; left:${left}px;height:${height}px;width:${width}px;`);
-
-
 
     }else{
 
@@ -99,6 +98,7 @@ export default Ember.Component.extend({
         styleString = Ember.String.htmlSafe(`left:${draggingPosition.left}px;top:${draggingPosition.top}px;`);
       }
     }
+    
     return styleString;
   })
 

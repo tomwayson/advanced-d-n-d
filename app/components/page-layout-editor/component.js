@@ -14,7 +14,6 @@ export default Ember.Component.extend({
 
   dropTargetModel: null,
 
-
   /**
    * Get the coordinator service
    */
@@ -33,13 +32,13 @@ export default Ember.Component.extend({
   insertSection(section, targetSection, dockPosition) {
     const sections = this.get('model.sections');
     // where to insert?
-    // default to the begining (left)
+    // default to the begining (top)
     let pos = 0;
     if (targetSection) {
       // if inserting before, use target card's current index
       // otherwise (inserting after) use the next index
       pos = sections.indexOf(targetSection);
-      if(dockPosition ==='bottom'){
+      if(dockPosition ==='row-bottom'){
         pos++;
       }
     }
@@ -52,19 +51,16 @@ export default Ember.Component.extend({
   },
 
   actions: {
-    // onRowDrop(e, row) {
-    //   this.sendAction('onDrop', e, row, this.get('moveRow'));
-    //   this.set('moveRow', null);
-    // },
-    // onStartMove(e, row) {
-    //   this.set('moveRow', row);
-    // },
+
     onRemoveSection(sectionModel){
       console.info('PAGE-LAYOUT-EDITOR onRemoveSection');
       this._removeSection(sectionModel);
     },
     onEditSection(sectionModel){
       console.info('PAGE-LAYOUT-EDITOR onEditSection');
+    },
+    onEditCard(cardModel){
+      console.info('PAGE-LAYOUT-EDITOR onEditCard');
     }
   }
 });

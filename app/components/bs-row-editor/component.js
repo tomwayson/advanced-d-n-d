@@ -17,11 +17,11 @@ export default Ember.Component.extend({
 
   init(){
     this._super(...arguments);
-    this.get('layoutCoordinator').rows.push(this);
+    this.get('layoutCoordinator').rowComponents.push(this);
   },
   willDestroyElement(){
     //remove the component from the hash
-    this.set('layoutCoordinator.rows', this.get('layoutCoordinator.rows').without(this));
+    this.set('layoutCoordinator.rowComponents', this.get('layoutCoordinator.rowComponents').without(this));
   },
 
   /**
@@ -58,6 +58,7 @@ export default Ember.Component.extend({
     //setup a default model that will hide the resizer
     //this allows us to return early out of this function
     //which allows us to do less work if short-circuting
+
     let resizerModel = {
       visible:false,
       position : null,
@@ -90,11 +91,11 @@ export default Ember.Component.extend({
       this.set('resizerModel', resizerModel);
       return;
     }
-
+    console.log('onUpdateCardResizer:showing resizer...');
     //get the index of the passed in card so we can determine position and neighbors
     let cardIdx = this.get('model.cards').indexOf(options.card);
 
-    console.log('Edge: ' + options.edge + ' Card Index: ' + cardIdx + ' Card Count: ' + cardCount);
+    console.log('onUpdateCardResizer:Edge: ' + options.edge + ' Card Index: ' + cardIdx + ' Card Count: ' + cardCount);
 
     //if this is the first card, and the requested edge is left, return
     if(cardIdx === 0 && options.edge === 'left'){
@@ -172,7 +173,7 @@ export default Ember.Component.extend({
       // if inserting before, use target card's current index
       // otherwise (inserting after) use the next index
       pos = cards.indexOf(targetCardModel);
-      if(dockPosition === 'right'){
+      if(dockPosition === 'card-right'){
         pos++;
       }
     }
@@ -183,11 +184,6 @@ export default Ember.Component.extend({
    * Handle actions, bubbling from the cards in the row
    */
   actions: {
-    // onCardDrag() {
-    //   // if card is dragged to another row
-    //   // make sure it is removed from this row
-    //   this.set('layoutCoordinator.transferData.draggedFromRow', this.get('model'));
-    // },
     onCardRemove( cardToRemove ) {
       this.sendAction('onCardRemove', cardToRemove, this.get('model'));
     },

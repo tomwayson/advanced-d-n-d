@@ -45,9 +45,11 @@ export default Ember.Component.extend({
      * fires on mouseEnter & mouseLeave for the targets
      */
     updateDockingTarget(dockTargetName){
-      console.log('row-drop-targets setting dropTargetName to ' + dockTargetName)
-      this.set('layoutCoordinator.draggingProperties.dockingTarget', dockTargetName);
+      if(this.get('layoutCoordinator.draggingProperties')){
+        console.log('row-drop-targets setting dropTargetName to ' + dockTargetName)
+        this.set('layoutCoordinator.draggingProperties.dockingTarget', dockTargetName);
+      }
     }
   }
-  
+
 });

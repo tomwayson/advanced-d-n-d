@@ -2,9 +2,9 @@ import Ember from 'ember';
 
 export default Ember.Service.extend(Ember.Evented, {
   isDragging:false,
-  components:[],
-  rows:[],
-  sections:[],
+  cardComponents:[],
+  rowComponents:[],
+  sectionComponents:[],
   // Used when a dragging UX is in progress. It serves as a communication hub.
   draggingProperties: null,
   draggingInProgress: Ember.computed.notEmpty('draggingProperties'),
@@ -12,16 +12,15 @@ export default Ember.Service.extend(Ember.Evented, {
   // until this property is null again.
   activeEventsHandler: null,
   actionInProgress: Ember.computed.notEmpty('activeEventsHandler'),
+
   /**
    * Delegated mouse event handlers
    */
   setMouseHandlers(moveHandler, upHandler){
-    console.log('layoutCoordinator setting mousehandlers...');
     Ember.$('body').on('mousemove', moveHandler);
     Ember.$('body').on('mouseup', upHandler);
   },
   clearMouseHandlers(moveHandler, upHandler){
-    console.log('layoutCoordinator clearning mousehandlers...');
     Ember.$('body').off('mousemove', moveHandler);
     Ember.$('body').off('mouseup', upHandler);
   },
@@ -79,13 +78,11 @@ export default Ember.Service.extend(Ember.Evented, {
   mouseMove(event){
 
     if(this.get('draggingProperties')){
-      //console.log('layoutCoordinator internal mousemove');
       let position = {
         left: event.originalEvent.clientX + window.pageXOffset,
         top: event.originalEvent.clientY + window.pageYOffset
       };
       //tried to throttle this, but ends up being janky
-      //Ember.run.throttle(this, this.updateDragging, position, 30, true);
       this.updateDragging(position);
     }
   },
@@ -109,6 +106,7 @@ export default Ember.Service.extend(Ember.Evented, {
     //TODO: refactor so we don't need to do this arbitrary copying of properties
     this.set('draggingProperties.dragType', this.get('draggingProperties.component.dragType'));
     this.set('draggingProperties.dragAction', this.get('draggingProperties.component.dragAction'));
+
     //clear any current mouseHandlers
     this.clearMouseHandlers();
     //setup our own mouse handlers
@@ -129,30 +127,33 @@ export default Ember.Service.extend(Ember.Evented, {
       draggingProperties.set('mousePosition', position);
     }
 
+    //hide any controls that may be visible
+    this.trigger('showControls', null);
+    this.trigger('showSectionControls', null);
+
     //---------------------
     // HIT TESTS
     //---------------------
-    // We intersect the mouse position against all the cards, rows and sections
+    // We intersect the mouse position against the cards, rows and sections
     // CARDS
-    let cards = this.get('components');
+    let cards = this.get('cardComponents');
     let cardFound = cards.find(function(card){
       let cp = card.get('componentPosition');
-      //console.log('CP for ' + card.get('elementId') + ': ', cp);
       return position.left >= cp.left && position.left <= (cp.left + cp.width) && position.top >= cp.top && position.top <= (cp.top + cp.height);
     });
-    if(cardFound){
-      //console.log('Got hit for card : ' + cardFound.get('elementId'));
+    if(cardFound !== draggingProperties.get('component')){
+      //dont show drop-targets if we are dragging over the start card...
       if(this.get('draggingProperties.dragType') === 'card'){
         this.trigger( 'showCardDropTargets' , cardFound );
       }
       this.set('draggingProperties.targetCard', cardFound);
     }else{
-      this.trigger( 'showCardDropTargets',null  );
+      this.trigger( 'showCardDropTargets', null  );
     }
 
     //ROWS
     //this is fine because there should always be row drop-targets
-    let rows = this.get('rows');
+    let rows = this.get('rowComponents');
     let rowFound = rows.find(function(row){
       let cp = row.get('componentPosition');
       //console.log('CP for ' + row.get('elementId') + ': ', cp);
@@ -170,7 +171,7 @@ export default Ember.Service.extend(Ember.Evented, {
     }
 
     //SECTIONS
-    let sections = this.get('sections');
+    let sections = this.get('sectionComponents');
     let sectionFound = sections.find(function(section){
       let cp = section.get('componentPosition');
       return position.left >= cp.left && position.left <= (cp.left + cp.width) && position.top >= cp.top && position.top <= (cp.top + cp.height);
@@ -189,14 +190,23 @@ export default Ember.Service.extend(Ember.Evented, {
 
   },
 
+  /**
+   * Handle Dropping
+   */
   handleDrop(draggingProperties){
     console.log('----------------------------');
     console.log(' DROP EVENT:');
-    console.log('   TARGET CARD:' + draggingProperties.targetCard.get('elementId'));
+    if(draggingProperties.targetCard){
+        console.log('   TARGET CARD:' + draggingProperties.targetCard.get('elementId'));
+    }else{
+      console.log('   TARGET CARD: null' );
+    }
+
     console.log('   TARGET ROW :' + draggingProperties.targetRow.get('elementId'));
     console.log('   TARGET SECTION :' + draggingProperties.targetSection.get('elementId'));
     console.log('   ----------------------------');
-    console.log('   DOCK POSITION:' + draggingProperties.dockingTarget);
+    console.log('   DOCKING TARGET:' + draggingProperties.dockingTarget);
+    console.log('   DROP TARGET TYPE:' + draggingProperties.dropTargetType);
     console.log('   DRAGGED TYPE:' + draggingProperties.component.get('dragType'));
     console.log('   DRAGGED ACTION:' + draggingProperties.component.get('dragAction'));
     console.log('----------------------------');
@@ -213,71 +223,61 @@ export default Ember.Service.extend(Ember.Evented, {
     let targetSection = draggingProperties.targetSection;
     let dockingTarget = draggingProperties.dockingTarget;
 
+    //we have to clone on add or move so we don't get
+    //nested refs to the same object
+    let clone;
+
     //if we have a card...
     if(dragType === 'card'){
       //if ACTION is ADD
       if(dragAction === 'add'){
+        clone = Ember.copy(draggingProperties.component.get('model.defaults'), true);
         //and we are DROPPING on a CARD-TARGET...
         if(dropTargetType === 'card'){
-          //call targetRow.insertCard(card, targetCard, dockingTarget)
-          targetRow.insertCard(draggingProperties.component.get('model.defaults'), targetCard.get('model'), dockingTarget);
-        }
-        //and we are DROPPING on a ROW-TARGET
-        if(dropTargetType === 'row'){
-          //call targetSection.insertCard(card)
-          targetSection.insertCard(draggingProperties.component, targetCard, dockingTarget);
-        }
-      }
-      if(dragAction === 'move'){
-        //and we are DROPPING on a CARD-TARGET...
-        if(dropTargetType === 'card'){
-          //let originalWidth = targetCard.get('model.width');
-          let clone = Ember.copy(draggingProperties.component.get('model'), true);
-
-          //remove it from it's old row, and resize the remaining cards...
-          //brute-force it because this will not be a large collection
-          let sections = this.get('sections');
-          sections.forEach(function(sectionComponent){
-            let sectionModel = sectionComponent.get('model');
-            sectionModel.rows.forEach(function(rowModel){
-              //find the row that contained the card...
-              if(rowModel.cards.indexOf(draggingProperties.component.get('model')) > -1){
-                targetSection.removeCard(draggingProperties.component.get('model'), rowModel);
-              }
-            });
-          });
-
           targetRow.insertCard(clone, targetCard.get('model'), dockingTarget);
         }
         //and we are DROPPING on a ROW-TARGET
         if(dropTargetType === 'row'){
-          //call targetSection.insertCard(card)
-          targetSection.insertCard(draggingProperties.component, targetCard, dockingTarget);
+          targetSection.insertCardIntoNewRow(clone, targetRow.get('model'), dockingTarget);
+        }
+      }
+      if(dragAction === 'move'){
+        //if we are moving, lets make a clone of the mode, then remove it from where it was
+        clone = Ember.copy(draggingProperties.component.get('model'), true);
+        //remove it from it's old row, and resize the remaining cards...
+        //brute-force it because this will not be a large collection
+        let sections = this.get('sectionComponents');
+        sections.forEach(function(sectionComponent){
+          let sectionModel = sectionComponent.get('model');
+          sectionModel.rows.forEach(function(rowModel){
+            //find the row that contained the card...
+            if(rowModel.cards.indexOf(draggingProperties.component.get('model')) > -1){
+              targetSection.removeCard(draggingProperties.component.get('model'), rowModel);
+            }
+          });
+        });
+        //and we are DROPPING on a CARD-TARGET...
+        if(dropTargetType === 'card'){
+          targetRow.insertCard(clone, targetCard.get('model'), dockingTarget);
+        }
+        //and we are DROPPING on a ROW-TARGET
+        if(dropTargetType === 'row'){
+          targetSection.insertCardIntoNewRow(clone, targetRow.get('model'), dockingTarget);
         }
       }
     }//dragType===card
 
-    // Sections are managed at the PAGE-LAYOUT-EDITOR level
+    // Sections are managed at the layoutEditor level
     //if we have a section...
     if(dragType === 'section'){
-      //we need to get the section that is the target
-      let sections = this.get('sections');
-      sections.forEach(function(sectionComponent){
-        let sectionModel = sectionComponent.get('model');
-        sectionModel.rows.forEach(function(rowModel){
-          //find the row that contained the card...
-          if(rowModel.cards.indexOf(draggingProperties.component.get('model')) > -1){
-            targetSection.removeCard(draggingProperties.component.get('model'), rowModel);
-          }
-        });
-      });
 
       if(dragAction === 'add'){
-        this.get('layoutEditor').insertSection(draggingProperties.component.get('model.defaults'), targetSection.get('model'), dockingTarget);
+        clone = Ember.copy(draggingProperties.component.get('model.defaults'), true);
+        this.get('layoutEditor').insertSection(clone, targetSection.get('model'), dockingTarget);
       }
       if(dragAction ==='move'){
         //make a clone
-        let clone = Ember.copy(draggingProperties.component.get('model'), true);
+        clone = Ember.copy(draggingProperties.component.get('model'), true);
         this.set('layoutEditor.model.sections',this.get('layoutEditor.model.sections').without(draggingProperties.component.get('model')));
         //now inject the clone at the correct location
         this.get('layoutEditor').insertSection(clone, targetSection.get('model'), dockingTarget);

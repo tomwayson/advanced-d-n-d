@@ -1,3 +1,6 @@
+/**
+ * bs-card-editor/component.js
+ */
 import Ember from 'ember';
 
 export default Ember.Component.extend({
@@ -20,21 +23,19 @@ export default Ember.Component.extend({
 
   layoutCoordinator: Ember.inject.service('layout-coordinator'),
 
-  ignoreNextLeave:false,
-
   init(){
     this._super(...arguments);
     //add this to the layoutCoordinatior
-    this.get('layoutCoordinator').components.push(this);
+    this.get('layoutCoordinator').cardComponents.push(this);
   },
   willDestroyElement(){
     //remove the component from the hash
-    this.set('layoutCoordinator.components', this.get('layoutCoordinator.components').without(this));
+    this.set('layoutCoordinator.cardComponents', this.get('layoutCoordinator.cardComponents').without(this));
   },
+
 
   mouseEnter(/*event*/){
     if(!this.get('layoutCoordinator.draggingProperties')){
-      //console.log('mouseEnter: showControls for ' + this.get('elementId'));
       this.get('layoutCoordinator').trigger( 'showControls' , this );
     }
   },
@@ -53,7 +54,7 @@ export default Ember.Component.extend({
       //still inside
     }else{
       if(!this.get('layoutCoordinator.draggingProperties')){
-        this.get('layoutCoordinator').trigger( 'hideControls' , this );
+        this.get('layoutCoordinator').trigger( 'showControls' );
       }
     }
   },

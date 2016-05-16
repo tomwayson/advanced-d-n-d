@@ -15,11 +15,11 @@ export default Ember.Component.extend({
   }),
   init(){
     this._super(...arguments);
-    this.get('layoutCoordinator').sections.push(this);
+    this.get('layoutCoordinator').sectionComponents.push(this);
   },
   willDestroyElement(){
     //remove the component from the hash
-    this.set('layoutCoordinator.sections', this.get('layoutCoordinator.sections').without(this));
+    this.set('layoutCoordinator.sectionComponents', this.get('layoutCoordinator.sectionComponents').without(this));
   },
   /**
    * Component Position
@@ -76,6 +76,29 @@ export default Ember.Component.extend({
       height: rect.height
     };
     return cp;
+  },
+
+  insertCardIntoNewRow(card, targetRowModel, dockingTarget){
+    //first card in a new row is always 12 wide
+    Ember.set(card, 'width', 12);
+
+    const rows = this.get('model.rows');
+    // where to insert?
+    // default to the begining (left)
+    let pos = 0;
+    if (targetRowModel) {
+      // if inserting before, use target card's current index
+      // otherwise (inserting after) use the next index
+      pos = rows.indexOf(targetRowModel);
+      if(dockingTarget === 'row-bottom'){
+        pos++;
+      }
+    }
+    //we need to cook a row model
+    let row = {
+      cards:[card]
+    };
+    rows.insertAt(pos, row);
   },
 
   /**

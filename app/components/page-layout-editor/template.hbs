@@ -1,9 +1,8 @@
 {{#if hasSections}}
   {{#each model.sections as |section|}}
-    {{layout-section-editor model=section
-                  layoutEditor=this
-                  onRemoveSection=(action 'onRemoveSection')
-                }}
+    {{layout-section-editor
+                  model=section
+                  onRemoveSection=(action 'onRemoveSection')}}
   {{/each}}
 {{else}}
   <div class="container">
@@ -17,7 +16,8 @@
 
 
 {{drop-target model=dropTargetModel}}
-{{card-controls visible=controlsVisible}}
+{{card-controls visible=controlsVisible
+  onEditCard=(action 'onEditCard')}}
 {{section-controls
   onEditSection=(action 'onEditSection')
   onRemoveSection=(action 'onRemoveSection')}}

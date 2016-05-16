@@ -18,23 +18,21 @@ export default Ember.Component.extend({
     this._super(...arguments);
     //add handlers for layoutCoordinator events
     this.get('layoutCoordinator').on('showControls', Ember.run.bind(this, this.showControls));
-    this.get('layoutCoordinator').on('hideControls', Ember.run.bind(this, this.hideControls));
+
   },
   willDestroyElement(){
     this.get('layoutCoordinator').off('showControls', this.showControls);
-    this.get('layoutCoordinator').off('hideControls', this.hideControls);
+
   },
   showControls(cardComponent){
+    this.set('cardComponent', cardComponent);
     if(cardComponent){
-      this.set('cardComponent', cardComponent);
+      this.updateStyle( cardComponent.get('componentPosition') );
+      this.set('invisible', false);
+    }else{
+      this.updateStyle( null );
+      this.set('invisible', true);
     }
-    this.updateStyle( cardComponent.get('componentPosition') );
-    this.set('invisible', false);
-  },
-  hideControls(){
-    //console.log('card-controls caught hideControls event');
-    this.updateStyle( null );
-    this.set('invisible', true);
   },
   updateStyle(componentPosition){
     let styleString = Ember.String.htmlSafe('');
@@ -45,7 +43,6 @@ export default Ember.Component.extend({
       let tp = pos.top + 10;
       styleString = Ember.String.htmlSafe('top:' + tp + 'px; left:' + lf + 'px;');
     }
-    //console.log('card-controls style string: ' + styleString);
     this.set('style',  styleString);
   },
   mouseEnter() {
@@ -64,7 +61,9 @@ export default Ember.Component.extend({
     removeCard(){
       this.updateStyle();
       this.get('cardComponent').removeCard();
-
+    },
+    editCard(){
+      this.sendAction('onEditCard', this.get('cardComponent.model'));
     }
   }
 });
