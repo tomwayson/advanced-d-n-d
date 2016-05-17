@@ -178,9 +178,12 @@ export default Ember.Service.extend(Ember.Evented, {
     //SECTIONS
     let sectionFound = this.getComponentAtPosition('section', position);
     if(sectionFound){
+      let dragType = this.get('draggingProperties.dragType');
       //only show the section targets if we are dragging a section
-      if(this.get('draggingProperties.dragType') === 'section'){
+      if(dragType === 'section'){
         this.trigger( 'showRowDropTargets' , sectionFound );
+      } else if (dragType === 'card' && !sectionFound.get('hasRows')) {
+        this.trigger('showEmptySectionDropTarget', sectionFound);
       }
       this.set('draggingProperties.targetSection', sectionFound);
     }else{
@@ -197,12 +200,15 @@ export default Ember.Service.extend(Ember.Evented, {
     console.log('----------------------------');
     console.log(' DROP EVENT:');
     if(draggingProperties.targetCard){
-        console.log('   TARGET CARD:' + draggingProperties.targetCard.get('elementId'));
+      console.log('   TARGET CARD:' + draggingProperties.targetCard.get('elementId'));
     }else{
       console.log('   TARGET CARD: null' );
     }
-
-    console.log('   TARGET ROW :' + draggingProperties.targetRow.get('elementId'));
+    if(draggingProperties.targetRow){
+      console.log('   TARGET ROW :' + draggingProperties.targetRow.get('elementId'));
+    }else{
+      console.log('   TARGET ROW: null' );
+    }
     console.log('   TARGET SECTION :' + draggingProperties.targetSection.get('elementId'));
     console.log('   ----------------------------');
     console.log('   DOCKING TARGET:' + draggingProperties.dockingTarget);
@@ -213,6 +219,7 @@ export default Ember.Service.extend(Ember.Evented, {
     //hide the drop targets
     this.trigger('showCardDropTargets',null);
     this.trigger('showRowDropTargets',null);
+    this.trigger('showEmptySectionDropTarget',null);
 
     //expand out of the properties into vars we can reason about
     let dragType = draggingProperties.component.get('dragType');
@@ -240,6 +247,10 @@ export default Ember.Service.extend(Ember.Evented, {
         if(dropTargetType === 'row'){
           targetSection.insertCardIntoNewRow(clone, targetRow.get('model'), dockingTarget);
         }
+        //and we are DROPPING on an empty section
+        if(dropTargetType === 'section'){
+          targetSection.insertCardIntoNewRow(clone, null, dockingTarget);
+        }
       }
       if(dragAction === 'move'){
         //if we are moving, lets make a clone of the mode, then remove it from where it was
@@ -263,6 +274,10 @@ export default Ember.Service.extend(Ember.Evented, {
         //and we are DROPPING on a ROW-TARGET
         if(dropTargetType === 'row'){
           targetSection.insertCardIntoNewRow(clone, targetRow.get('model'), dockingTarget);
+        }
+        //and we are DROPPING on a ROW-TARGET
+        if(dropTargetType === 'section'){
+          targetSection.insertCardIntoNewRow(clone, null, dockingTarget);
         }
       }
     }//dragType===card

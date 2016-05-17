@@ -84,6 +84,16 @@ export default Ember.Component.extend({
           width = pos.width;
           left=pos.left;
           break;
+
+        case 'section-empty':
+          this.set('dockMessage', this.get('emptySectionMessage'));
+          this.set('layoutCoordinator.draggingProperties.dropTargetType', 'section');
+          pos = this.get('layoutCoordinator.draggingProperties.targetSection.componentPosition');
+          top=pos.top;
+          height=pos.height;
+          width = pos.width;
+          left=pos.left;
+          break;
       }
 
       styleString = Ember.String.htmlSafe(`top:${top}px; left:${left}px;height:${height}px;width:${width}px;`);
@@ -98,7 +108,7 @@ export default Ember.Component.extend({
         styleString = Ember.String.htmlSafe(`left:${draggingPosition.left}px;top:${draggingPosition.top}px;`);
       }
     }
-    
+
     return styleString;
   })
 
