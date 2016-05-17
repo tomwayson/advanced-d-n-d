@@ -1,0 +1,6 @@
+<div class="target-container" style={{targetContainerStyle}}>
+  <div class="section-drop-target empty {{if (eq dockingTarget 'section-empty') 'hover'}}"
+    {{action "updateDockingTarget" "section-empty" true on="mouseEnter"}}
+    {{action "updateDockingTarget" on="mouseLeave"}}
+    ></div>
+</div>

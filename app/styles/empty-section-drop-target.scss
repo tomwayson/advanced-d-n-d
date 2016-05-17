@@ -1,0 +1,36 @@
+.empty-section-drop-target{
+  .target-container{
+    display: block;
+    position: absolute;
+    // outline: 1px dashed purple;
+
+    .section-drop-target {
+
+      position: absolute;
+      // TODO: correct size for image
+      width: 60px;
+      height: 16px;
+      -moz-user-select: none;
+      -khtml-user-select: none;
+      -webkit-user-select: none;
+      cursor: default;
+      z-index: 580;
+      background-color: #f8f8f8;
+      background-position: 0 0;
+      margin: auto;
+      box-shadow: 0 0 20px 3px rgba(0, 0, 0, .2);
+
+      &.empty {
+        // TODO: correct position foe image
+        top: 20px;
+        left: calc(50% - 60px);
+        // TODO: need dock-center.png
+        background-image: url("./images/dock-top.png");
+      }
+      &.empty.hover {
+        // TODO: need dock-center-sel.png
+        background-image: url("./images/dock-top-sel.png");
+      }
+    }
+  }
+}
